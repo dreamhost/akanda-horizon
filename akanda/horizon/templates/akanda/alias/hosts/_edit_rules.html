@@ -1,0 +1,26 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block form_id %}host_alias_rule_form{% endblock %}
+{% block form_action %}{% url horizon:nova:networking:alias:hosts:edit host_alias.id%}{% endblock %}
+
+{% block modal-header %}{% trans "Edit a Host Alias" %}{% endblock %}
+{% block modal_id %}host_alias_rule_modal{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    <h3>{% trans "Description" %}:</h3>
+    <p>{% trans "Host aliases are shortcuts to defining commonly used instances." %}</p>
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Update Host Alias" %}" />
+  <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}
+

@@ -1,0 +1,26 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block form_id %}network_alias_rule_form{% endblock %}
+{% block form_action %}{% url horizon:nova:networking:alias:networks:edit network_alias.id%}{% endblock %}
+
+{% block modal-header %}{% trans "Edit a Network Alias" %}{% endblock %}
+{% block modal_id %}network_alias_rule_modal{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    <h3>{% trans "Description" %}:</h3>
+    <p>{% trans "A network alias is a shortcut to defining commonly used protocols and networks." %}</p>
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Update Network Alias" %}" />
+  <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}
+

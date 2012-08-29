@@ -1,0 +1,40 @@
+{% for hidden in form.hidden_fields %}
+  {{ hidden }}
+{% endfor %}
+{% if form.non_field_errors %}
+  <div class="alert alert-message alert-error">
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+<script>
+	$('#id_private_port_alias, #id_public_port_alias', '#create_portforwarding_rule__portsaction, #edit_portforwarding_rule__portsaction').change(function(){
+		if ($(this).attr('id').indexOf('public') != -1) {
+			$fields = $('div.public-port');
+		}else if ($(this).attr('id').indexOf('private') != -1) {
+			$fields = $('div.private-port');
+		}else {
+			return;
+		}
+
+		if ($(this).val() == "Custom") {
+			$fields.slideDown();
+		} else {
+			$fields.slideUp();
+		}
+	});
+</script>
+
+ <div class="left">
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.public_ip %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.public_port_alias protocol=form.public_protocol ports=form.public_ports class="public-port" %}
+   </fieldset>
+ </div>
+ <div class="right">
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.private_ip %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.private_port_alias protocol=form.private_protocol ports=form.private_ports class="private-port"%}
+   </fieldset>
+ </div>
+

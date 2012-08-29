@@ -1,0 +1,44 @@
+{% load compress %}
+{% for hidden in form.hidden_fields %}
+  {{ hidden }}
+{% endfor %}
+{% if form.non_field_errors %}
+  <div class="alert alert-message alert-error">
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+<script>
+	$('#id_source_port_alias, #id_destination_port_alias').change(function(){
+		if ($(this).attr('id').indexOf('source') != -1) {
+			$fields = $('div.source-port');
+		}else if ($(this).attr('id').indexOf('destination') != -1) {
+			$fields = $('div.destination-port');
+		}else {
+			return;
+		}
+
+		if ($(this).val() == "Custom") {
+			$fields.slideDown();
+		} else {
+			$fields.slideUp();
+		}
+	});
+</script>
+
+ <div class="left">
+   <h3>Source</h3>
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.source_network_alias %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.source_port_alias protocol=form.source_protocol ports=form.source_public_ports class="source-port" %}
+     {% include "akanda/common/_form_field_snippet.html" with field=form.policy %}
+   </fieldset>
+ </div>
+ <div class="right">
+   <h3>Destination</h3>
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.destination_network_alias %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.destination_port_alias protocol=form.destination_protocol ports=form.destination_public_ports class="destination-port" %}
+   </fieldset>
+</div>
+
