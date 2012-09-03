@@ -6,8 +6,8 @@ from horizon import tables
 
 class Delete(tables.DeleteAction):
     name = 'delete'
-    data_type_singular = _("Firewall")
-    data_type_plural = _("Firewalls")
+    data_type_singular = _("Port Forward")
+    data_type_plural = _("Ports Forward")
     success_url = reverse_lazy('horizon:nova:networking:index')
 
     def get_success_url(self, request=None):
