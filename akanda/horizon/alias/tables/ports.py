@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext as _
 
 from horizon import tables
@@ -7,6 +8,7 @@ class Delete(tables.DeleteAction):
     name = 'delete'
     data_type_singular = _("Port Alias")
     data_type_plural = _("Port Aliases")
+    success_url = reverse_lazy('horizon:nova:networking:index')
 
     def delete(self, request, obj_id):
         from akanda.horizon.fakes import PortAliasManager

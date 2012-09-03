@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext as _
 
 from horizon import tables
@@ -7,7 +8,14 @@ class Delete(tables.DeleteAction):
     name = 'delete'
     data_type_singular = _("Firewall")
     data_type_plural = _("Firewalls")
+    success_url = reverse_lazy('horizon:nova:networking:index')
 
+    def get_success_url(self, request=None):
+        # import here to avoid circular import
+        from akanda.horizon.tabs import portforwarding_tab_redirect
+        url = super(Delete, self).get_success_url(request)
+        return "%s?tab=%s" % (url, portforwarding_tab_redirect())
+    
     def delete(self, request, obj_id):
         from akanda.horizon.fakes import PortForwardingRuleManager
         PortForwardingRuleManager.delete(request, obj_id)
