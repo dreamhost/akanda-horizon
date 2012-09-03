@@ -15,7 +15,7 @@ class Delete(tables.DeleteAction):
         from akanda.horizon.tabs import portforwarding_tab_redirect
         url = super(Delete, self).get_success_url(request)
         return "%s?tab=%s" % (url, portforwarding_tab_redirect())
-    
+
     def delete(self, request, obj_id):
         from akanda.horizon.fakes import PortForwardingRuleManager
         PortForwardingRuleManager.delete(request, obj_id)
