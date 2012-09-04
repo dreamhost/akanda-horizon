@@ -7,6 +7,19 @@
   {% include "horizon/common/_page_header.html" with title=_("Akanda Networking") %}
 {% endblock page_header %}
 
+{% block css %}
+  {% include "akanda/_stylesheets.html" %}
+{% endblock %}
+
+{% comment %}
+{% block css %}
+  {{ block.super }}
+  {% compress css %}
+  <link href='{{ STATIC_URL }}akanda/less/bootstrap.less' type='text/less' media='screen' rel='stylesheet' />
+  {% endcompress %}
+{% endblock %}
+{% endcomment %}
+
 {% comment %}
 {% block js %}
   {{ block.super }}
