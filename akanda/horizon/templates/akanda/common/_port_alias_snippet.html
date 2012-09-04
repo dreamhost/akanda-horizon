@@ -1,5 +1,5 @@
 {% include "akanda/common/_form_field_snippet.html" with field=port_alias %}
-<div class="{{ class }} hide">
+<div class='{{ class }} {% ifnotequal port_alias.value "Custom" %} hide {% endifnotequal %}'>
   {% include "akanda/common/_form_field_snippet.html" with field=protocol %}
   {% include "akanda/common/_form_field_snippet.html" with field=ports %}
 </div>
