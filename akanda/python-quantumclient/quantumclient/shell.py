@@ -52,6 +52,8 @@ def env(*_vars, **kwargs):
 
 
 COMMAND_V2 = {
+    'portforward-list': utils.import_class(
+        'quantumclient.quantum.v2_0.portforward.ListPortforward'),
     'net-list': utils.import_class(
         'quantumclient.quantum.v2_0.network.ListNetwork'),
     'net-show': utils.import_class(

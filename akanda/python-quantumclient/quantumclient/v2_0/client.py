@@ -148,6 +148,7 @@ class Client(object):
                 "ports": "port",
                 "subnets": "subnet", }, }, }
 
+    dhportforwards_path = "/dhportforward"
     networks_path = "/networks"
     network_path = "/networks/%s"
     ports_path = "/ports"
@@ -234,6 +235,14 @@ class Client(object):
         Deletes the specified port
         """
         return self.delete(self.port_path % (port))
+
+    @APIParamsCall
+    def list_dhportforwards(self, **_params):
+        """
+        Fetches a list of all portforwards for a tenant
+        """
+        # Pass filters in "params" argument to do_request
+        return self.get(self.dhportforwards_path, params=_params)
 
     @APIParamsCall
     def list_networks(self, **_params):
