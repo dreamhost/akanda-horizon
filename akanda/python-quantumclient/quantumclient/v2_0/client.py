@@ -237,7 +237,7 @@ class Client(object):
         return self.delete(self.port_path % (port))
 
     @APIParamsCall
-    def list_portforwards(self, **_params):
+    def list_dhportforwards(self, **_params):
         """
         Fetches a list of all portforwards for a tenant
         """

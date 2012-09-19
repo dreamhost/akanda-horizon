@@ -154,7 +154,6 @@ class HelpAction(argparse.Action):
 
 
 class QuantumShell(App):
-
     CONSOLE_MESSAGE_FORMAT = '%(message)s'
     DEBUG_MESSAGE_FORMAT = '%(levelname)s: %(name)s %(message)s'
     log = logging.getLogger(__name__)
