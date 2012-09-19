@@ -43,6 +43,27 @@ class ListPortforward(ListCommand):
                     'instance_id', 'private_port',
                     'fixed_id', 'op_status']
 
+    # def get_parser(self, prog_name):
+    #     parser = super(ListPortforward, self).get_parser(prog_name)
+    #     return parser
+
+    # def get_data(self, parsed_args):
+    #     self.log.debug('get_data(%s)' % parsed_args)
+    #     quantum_client = self.get_client()
+    #     search_opts = {}
+    #     quantum_client.format = parsed_args.request_format
+    #     obj_lister = getattr(quantum_client,
+    #                          "list_%ss" % self.resource)
+    #     data = obj_lister(**search_opts)
+    #     info = []
+    #     collection = self.resource + "s"
+    #     if collection in data:
+    #         info = data[collection]
+    #     _columns = len(info) > 0 and sorted(info[0].keys()) or []
+    #     return (_columns, (utils.get_item_properties(s, _columns)
+    #             for s in info))
+
+
 
 # class ListExt(QuantumCommand, lister.Lister):
 #     """List all exts."""
