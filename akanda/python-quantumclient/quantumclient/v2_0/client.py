@@ -148,7 +148,11 @@ class Client(object):
                 "ports": "port",
                 "subnets": "subnet", }, }, }
 
+<<<<<<< HEAD
     portforwards_path = "/dhportforward"
+=======
+    dhportforwards_path = "/dhportforward"
+>>>>>>> 66053b691213bccbf69c6b3e9ab3d3c94c0a1b3e
     networks_path = "/networks"
     network_path = "/networks/%s"
     ports_path = "/ports"
@@ -237,12 +241,20 @@ class Client(object):
         return self.delete(self.port_path % (port))
 
     @APIParamsCall
+<<<<<<< HEAD
     def list_portforwards(self, **_params):
+=======
+    def list_dhportforwards(self, **_params):
+>>>>>>> 66053b691213bccbf69c6b3e9ab3d3c94c0a1b3e
         """
         Fetches a list of all portforwards for a tenant
         """
         # Pass filters in "params" argument to do_request
+<<<<<<< HEAD
         return self.get(self.portforwards_path, params=_params)
+=======
+        return self.get(self.dhportforwards_path, params=_params)
+>>>>>>> 66053b691213bccbf69c6b3e9ab3d3c94c0a1b3e
 
     @APIParamsCall
     def list_networks(self, **_params):

@@ -39,7 +39,10 @@ class ListPortforward(ListCommand):
     api = 'network'
     resource = 'dhportforward'
     log = logging.getLogger(__name__ + '.ListPortforward')
+<<<<<<< HEAD
     #Listing the table is not working. Use --verbose for JSON output.
+=======
+>>>>>>> 66053b691213bccbf69c6b3e9ab3d3c94c0a1b3e
     list_columns = ['id', 'name', 'public_port',
                     'instance_id', 'private_port',
                     'fixed_id', 'op_status']
