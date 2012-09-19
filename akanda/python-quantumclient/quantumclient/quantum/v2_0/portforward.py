@@ -45,6 +45,48 @@ class ListPortforward(ListCommand):
                     'fixed_id', 'op_status']
 
 
+class CreatePortforward(CreateCommand):
+    """Create a portforward for a given tenant."""
+
+    api = 'network'
+    resource = 'dhportforward'
+    log = logging.getLogger(__name__ + '.CreatePortforward')
+
+    def add_known_arguments(self, parser):
+        parser.add_argument(
+            '--admin-state-down',
+            default=True, action='store_false',
+            help='Set Admin State Up to false')
+        parser.add_argument(
+            '--admin_state_down',
+            action='store_false',
+            help=argparse.SUPPRESS)
+        parser.add_argument(
+            'name', metavar='name',
+            help='Name of portforward to create')
+        parser.add_argument(
+            'public_port', metavar='public_port',
+            help='Public port to create')
+        parser.add_argument(
+            'instance_id', metavar='instance_id',
+            help='Instance ID to use')
+        parser.add_argument(
+            'private_port', metavar='private_port',
+            help='Private port to create')
+        parser.add_argument(
+            'fixed_id', metavar='fixed_id',
+            help='IPAllocations ID to use')
+
+    def args2body(self, parsed_args):
+        body = {'portforward': {
+            'name': parsed_args.name,
+            'public_port': parsed_args.public_port,
+            'instance_id': parsed_args.instance_id,
+            'private_port': parsed_args.private_port,
+            'fixed_id': parsed_args.fixed_id,
+            'op_status': parsed_args.admin_state_down}}
+        return body
+
 # class ListExt(QuantumCommand, lister.Lister):
 #     """List all exts."""
 
