@@ -28,7 +28,8 @@ def portforward_get(request):
         "Accept": "application/json",
         "X-Auth-Token": request.user.token.id
     }
-    r = requests.get('http://0.0.0.0/v2.0/dhportforward.json', headers=headers)
+    r = requests.get('http://0.0.0.0:9696/v2.0/dhportforward.json',
+                     headers=headers)
     r.json
 
 
@@ -39,6 +40,6 @@ def portforward_post(request, payload):
         "Accept": "application/json",
         "X-Auth-Token": request.user.token.id
     }
-    r = requests.post('http://0.0.0.0/v2.0/dhportforward.json',
+    r = requests.post('http://0.0.0.0:9696/v2.0/dhportforward.json',
                       headers=headers, data=json.dumps(payload))
     r.json
