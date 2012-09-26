@@ -15,7 +15,7 @@
 #    under the License.
 #
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
-# DreamHost Qauntum Client Extensions
+# DreamHost Quantum Client Extensions
 # @author: Murali Raju, New Dream Network, LLC (DreamHost)
 
 
