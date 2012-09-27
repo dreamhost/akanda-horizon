@@ -15,7 +15,8 @@
 #    under the License.
 #
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
-# DreamHost Quantum Client Extensions
+# DreamHost Python Quantum Client additions
+# to consume DreamHost Quantum extensions
 # @author: Murali Raju, New Dream Network, LLC (DreamHost)
 
 
@@ -40,7 +41,7 @@ class ListPortforward(ListCommand):
     resource = 'dhportforward'
     log = logging.getLogger(__name__ + '.ListPortforward')
     _formatters = {}
-    #Listing the table is not working. Use --verbose for JSON output.
+    # Listing the table is not working. Use --verbose for JSON output.
     # list_columns = ['id', 'name', 'public_port',
     #                 'instance_id', 'private_port',
     #                 'fixed_id', 'op_status']
@@ -125,73 +126,3 @@ class CreatePortforward(CreateCommand):
         if parsed_args.tenant_id:
             body['portforward'].update({'tenant_id': parsed_args.tenant_id})
         return body
-
-# class ListExt(QuantumCommand, lister.Lister):
-#     """List all exts."""
-
-#     api = 'network'
-#     resource = 'extension'
-#     log = logging.getLogger(__name__ + '.ListExt')
-#     _formatters = None
-
-#     def get_parser(self, prog_name):
-#         parser = super(ListExt, self).get_parser(prog_name)
-#         return parser
-
-#     def get_data(self, parsed_args):
-#         self.log.debug('get_data(%s)' % parsed_args)
-#         quantum_client = self.get_client()
-#         search_opts = {}
-#         quantum_client.format = parsed_args.request_format
-#         obj_lister = getattr(quantum_client,
-#                              "list_%ss" % self.resource)
-#         data = obj_lister(**search_opts)
-#         info = []
-#         collection = self.resource + "s"
-#         if collection in data:
-#             info = data[collection]
-#         _columns = len(info) > 0 and sorted(info[0].keys()) or []
-#         return (_columns, (utils.get_item_properties(s, _columns)
-#                 for s in info))
-
-
-# class ShowExt(QuantumCommand, show.ShowOne):
-#     """Show information of a given resource
-
-#     """
-#     api = 'network'
-#     resource = "extension"
-#     log = logging.getLogger(__name__ + '.ShowExt')
-
-#     def get_parser(self, prog_name):
-#         parser = super(ShowExt, self).get_parser(prog_name)
-#         parser.add_argument(
-#             'ext_alias', metavar='ext-alias',
-#             help='the extension alias')
-#         return parser
-
-#     def get_data(self, parsed_args):
-#         self.log.debug('get_data(%s)' % parsed_args)
-#         quantum_client = self.get_client()
-#         quantum_client.format = parsed_args.request_format
-#         params = {}
-#         obj_shower = getattr(quantum_client,
-#                              "show_%s" % self.resource)
-#         data = obj_shower(parsed_args.ext_alias, **params)
-#         if self.resource in data:
-#             for k, v in data[self.resource].iteritems():
-#                 if isinstance(v, list):
-#                     value = ""
-#                     for _item in v:
-#                         if value:
-#                             value += "\n"
-#                         if isinstance(_item, dict):
-#                             value += utils.dumps(_item)
-#                         else:
-#                             value += str(_item)
-#                     data[self.resource][k] = value
-#                 elif v is None:
-#                     data[self.resource][k] = ''
-#             return zip(*sorted(data[self.resource].iteritems()))
-#         else:
-#             return None
