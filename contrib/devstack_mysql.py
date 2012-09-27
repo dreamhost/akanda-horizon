@@ -45,6 +45,7 @@ def get_ipallocations_id():
                                      subnet_id=subnet_id,
                                      network_id=network_id,
                                      ip_address='172.16.20.1')
+<<<<<<< HEAD
     print ''
     print "Created ipallocations id: ", ipallocations_id
     print ''
@@ -60,6 +61,18 @@ def get_tenant_id():
     except Exception, e:
         raise e
 
+=======
+    return ipallocations_id
+
+
+def get_tenant_id():
+    """get_tenant_id"""
+    try:
+        engine = create_engine('mysql://root:openstack@localhost')
+    except Exception, e:
+        raise e
+
+>>>>>>> 9835fb628da188c1d64c0a5f33470c9a3ada5b20
     #Select tenant ID for later use
     #Reopen the DB connection to get the tenant_id
     engine.execute("USE keystone")
@@ -70,6 +83,7 @@ def get_tenant_id():
         tenant_id = row['id']
 
     return tenant_id
+<<<<<<< HEAD
 
 
 def populate_portforwards_table(ipallocations_id, tenant_id):
@@ -82,6 +96,20 @@ def populate_portforwards_table(ipallocations_id, tenant_id):
     except Exception, e:
         raise e
 
+=======
+
+
+def populate_portforwards_table(ipallocations_id, tenant_id):
+    """Populating sample portforwards.
+
+    """
+    try:
+        engine = create_engine('mysql://root:openstack@localhost')
+        metadata = MetaData(bind=engine)
+    except Exception, e:
+        raise e
+
+>>>>>>> 9835fb628da188c1d64c0a5f33470c9a3ada5b20
     engine.execute("USE ovs_quantum")
     portforwards_table = sqlalchemy.Table("portforwards",
                                           metadata, autoload=True)
