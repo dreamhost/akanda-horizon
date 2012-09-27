@@ -2,6 +2,7 @@ from django.utils.translation import ugettext as _
 
 from horizon import tabs
 
+from akanda.horizon import client
 from akanda.horizon.portforwarding.tables import PortForwardingTable
 
 
@@ -12,5 +13,6 @@ class PortForwardingTab(tabs.TableTab):
     template_name = "horizon/common/_detail_table.html"
 
     def get_portforwarding_data(self):
-        from akanda.horizon.fakes import PortForwardingRuleManager
-        return PortForwardingRuleManager.list_all(self.request)
+        # from akanda.horizon.fakes import PortForwardingRuleManager
+        # return = PortForwardingRuleManager.list_all(self.request)
+        return client.portforward_get(self.request)

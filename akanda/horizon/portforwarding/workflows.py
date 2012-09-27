@@ -3,9 +3,12 @@ from django.utils.translation import ugettext as _
 from horizon import workflows
 from horizon import forms
 from horizon import exceptions
+from horizon.api.nova import server_list
 
 from akanda.horizon import common
 from akanda.horizon.tabs import portforwarding_tab_redirect
+from akanda.horizon.client import portforward_post
+
 from akanda.horizon.fakes import INSTANCES_FAKE_DATA
 from akanda.horizon.fakes import PortAliasManager
 
@@ -17,6 +20,9 @@ def get_port_aliases():
     port_aliases.insert(0, ('', ''))
     return port_aliases
 
+
+def get_instances(request):
+    return server_list(request)
 
 class DetailsAction(workflows.Action):
     id = forms.CharField(
@@ -58,6 +64,8 @@ class PortsAction(workflows.Action):
 
     def __init__(self, *args, **kwargs):
         super(PortsAction, self).__init__(*args, **kwargs)
+        # import pdb; pdb.set_trace()
+        # x = get_instances(self.request)
         port_alias_choices = get_port_aliases()
         self.fields['public_port_alias'] = forms.ChoiceField(
             choices=port_alias_choices)
@@ -101,8 +109,8 @@ class PortForwardingRule(workflows.Workflow):
             return False
 
     def _create_portforwarding_rule(self, request, data):
-        from akanda.horizon.fakes.horizon import PortForwardingRuleManager
-        from akanda.horizon.fakes.horizon import PortAliasManager
+        # from akanda.horizon.fakes import PortForwardingRuleManager
+        from akanda.horizon.fakes import PortAliasManager
         if data['public_port_alias'] != 'Custom':
             public_port_alias = PortAliasManager.get(
                 request, data['public_port_alias'])
@@ -117,7 +125,9 @@ class PortForwardingRule(workflows.Workflow):
 
         # data.pop('public_ip')
         # data.pop('private_ip')
-        PortForwardingRuleManager.create(request, data)
+        # PortForwardingRuleManager.create(request, data)
+        portforward_post(request, data)
+        
 
 
 class EditPortForwardingRule(workflows.Workflow):
