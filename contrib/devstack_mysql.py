@@ -118,7 +118,7 @@ def populate_portforwards_table(ipallocations_id, tenant_id):
     print ''
 
 
-def populate_addressbook_table(ipallocations_id, tenant_id):
+def populate_addressbook_stuff(ipallocations_id, tenant_id):
     """Populating sample portforwards.
 
     """
@@ -128,29 +128,26 @@ def populate_addressbook_table(ipallocations_id, tenant_id):
     except Exception, e:
         raise e
 
+    #IDs to be used later
+    addressbook_group_id = uuid.uuid4()
+    addressbook_entries_id = uuid.uuid4()
+    addressbooks_id = uuid.uuid4()
+
     engine.execute("USE ovs_quantum")
-    portforwards_table = sqlalchemy.Table("portforwards",
+    addressbookgroups_table = sqlalchemy.Table("addressbookgroups",
                                           metadata, autoload=True)
-    insert_portfowards_sql = portforwards_table.insert()
-    insert_portfowards_sql.execute(
+    insert_addressbookgroups_sql = addressbookgroups_table.insert()
+    insert_addressbookgroups_sql.execute(
         [
-            {'tenant_id': tenant_id, 'id': uuid.uuid4(), 'name': 'foobar1',
-             'public_port': '80', 'instance_id': uuid.uuid4(),
-             'private_port': '800', 'fixed_id': ipallocations_id,
-             'op_status': 'ACTIVE', 'protocol': 'tcp'},
-            {'tenant_id': tenant_id, 'id': uuid.uuid4(), 'name': 'foobar2',
-             'public_port': '90', 'instance_id': uuid.uuid4(),
-             'private_port': '900', 'fixed_id': ipallocations_id,
-             'op_status': 'ACTIVE', 'protocol': 'tcp'},
-            {'tenant_id': tenant_id, 'id': uuid.uuid4(), 'name': 'foobar3',
-             'public_port': '100', 'instance_id': uuid.uuid4(),
-             'private_port': '1000', 'fixed_id': ipallocations_id,
-             'op_status': 'ACTIVE', 'protocol': 'udp'},
+            {'tenant_id': tenant_id, 'id': addressbook_group_id,
+             'name': 'foobar1', 'table_id': addressbooks_id}
 
         ])
 
+
+
     print ''
-    print "Populating the addressbooks table...have fun!"
+    print "Populating addressbooks...have fun!"
     print ''
 
 
