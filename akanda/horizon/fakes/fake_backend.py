@@ -1,5 +1,3 @@
-import requests
-
 from .fake_models import (
     Port, Host, Network, FirewallRule, PortForwardingRule)
 
@@ -34,8 +32,7 @@ class Manager(object):
 
 class PortAliasManager(Manager):
     def list_all(self, request=None):
-        #return [Port(**v) for v in self.db.values()]
-        r = requests.get("http://0.0.0.0:9696/v2/extensions")
+        return [Port(**v) for v in self.db.values()]
 
     def get(self, request, obj_id):
         # user = request.user
