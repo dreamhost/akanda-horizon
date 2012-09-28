@@ -8,6 +8,12 @@ PROTOCOL_CHOICES = (
     (2, 'TCP+UDP'),
 )
 
+NEW_PROTOCOL_CHOICES = (
+    ('tcp', 'TCP'),
+    ('udp', 'UDP'),
+    ('tcp+udp', 'TCP+UDP'),
+)
+
 POLICY_CHOICES = (
     (0, 'Allow'),
     (1, 'Deny'),

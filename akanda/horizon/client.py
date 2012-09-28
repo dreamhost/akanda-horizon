@@ -17,12 +17,13 @@
 # @author: Murali Raju, New Dream Network, LLC (DreamHost)
 # @author: Rosario Disomma, New Dream Network, LLC (DreamHost)
 
-import requests
 import json
+
+import requests
 
 from horizon.api.nova import server_get
 
-from akanda.horizon.common import PROTOCOL_CHOICES as protocol_choices
+from akanda.horizon.common import NEW_PROTOCOL_CHOICES as protocol_choices
 PROTOCOL_CHOICES = dict(protocol_choices)
 
 
@@ -80,6 +81,85 @@ def portforward_post(request, payload):
     else:
         return False
 
+
+def portalias_list(request):
+    headers = {
+        "User-Agent": "python-quantumclient",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Auth-Token": request.user.token.id
+    }
+    r = requests.get('http://0.0.0.0:9696/v2.0/dhportalias.json',
+                     headers=headers)
+    tmp = r.json.get('portaliases', {})
+    portaliases_list = []
+    for item in tmp:
+        portalias = Port(
+            alias_name = item.get('name'),
+            protocol = item.get('protocol'),
+            port = item.get('port'),
+            id = item.get('id'),
+        )
+        portaliases_list.append(portalias)
+    return portaliases_list
+
+
+def portalias_create(request, payload):
+    headers = {
+        "User-Agent": "python-quantumclient",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Auth-Token": request.user.token.id
+    }
+    
+    portalias = {'portforward':{}, 'portalias': {
+        'name': payload['alias_name'],
+        'protocol': 'tcp',
+        'port': payload['ports'],
+        }}
+    
+    r = requests.post('http://0.0.0.0:9696/v2.0/dhportalias.json',
+                      headers=headers, data=json.dumps(portalias))
+    r.raise_for_status(allow_redirects=False)
+    return True
+
+
+class Port(object):
+    def __init__(self, alias_name, protocol, port, id=None):
+        self.alias_name = alias_name
+        self.protocol = protocol
+        self.port = port
+        self.id = id
+
+    def display_protocol(self):
+        return PROTOCOL_CHOICES[self.protocol]
+
+    # @protocol.setter
+    # def protocol(self, value):
+    #     if isinstance(value, basestring):
+    #         self._protocol = int(value)
+    #     else:
+    #         self._protocol = value
+
+    # @property
+    # def ports(self):
+    #     return '-'.join(map(str, self._ports))
+
+    # @ports.setter
+    # def ports(self, value):
+    #     if isinstance(value, basestring):
+    #         self._ports = map(int, value.split('-'))
+    #         self._ports.sort()
+    #     else:
+    #         self._ports = value
+
+    def raw(self):
+        data = self.__dict__.copy()
+        for k, v in data.items():
+            if k.startswith('_'):
+                tmp = data.pop(k)
+                data[k[1:]] = tmp
+        return data
 
 class PortForwardingRule(object):
     def __init__(self, rule_name, instance, public_port_alias,
@@ -171,11 +251,11 @@ class PortForwardingRule(object):
         return data
 
 
-class Network(object):
-    def __init__(self, alias_name, cidr, id=None):
-        self.alias_name = alias_name
-        self.cidr = cidr
-        self.id = id or uuid.uuid4().hex
+# class Network(object):
+#     def __init__(self, alias_name, cidr, id=None):
+#         self.alias_name = alias_name
+#         self.cidr = cidr
+#         self.id = id or uuid.uuid4().hex
 
-    def raw(self):
-        return self.__dict__.copy()
+#     def raw(self):
+#         return self.__dict__.copy()
