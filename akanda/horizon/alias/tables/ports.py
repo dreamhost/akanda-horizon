@@ -31,8 +31,8 @@ class Edit(tables.LinkAction):
 
 class PortAliasTable(tables.DataTable):
     alias_name = tables.Column('alias_name', verbose_name=_("Alias Name"))
-    protocol = tables.Column('protocol', verbose_name=_("Protocol"))
-    ports = tables.Column('ports', verbose_name=_("Ports"))
+    protocol = tables.Column('display_protocol', verbose_name=_("Protocol"))
+    ports = tables.Column('port', verbose_name=_("Port"))
 
     class Meta:
         name = "ports"
