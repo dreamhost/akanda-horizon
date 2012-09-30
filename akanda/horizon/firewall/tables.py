@@ -40,11 +40,11 @@ class FirewallRuleTable(tables.DataTable):
     source_ip = tables.Column(
         'source_ip', verbose_name=_("Source IP"))
     source_ports = tables.Column(
-        'source_ports', verbose_name=_("Source Ports"))
+        'display_source_port', verbose_name=_("Source Port"))
     destination_ip = tables.Column(
         'destination_ip', verbose_name=_("Destionation IP"))
     destination_ports = tables.Column(
-        'destination_ports', verbose_name=_("Destionation Ports"))
+        'display_destination_port', verbose_name=_("Destionation Port"))
 
     class Meta:
         name = "firewall_rule"

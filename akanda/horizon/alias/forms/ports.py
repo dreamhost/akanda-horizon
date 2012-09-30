@@ -9,6 +9,7 @@ from akanda.horizon import common
 from akanda.horizon.tabs import alias_tab_redirect
 from akanda.horizon.client import portalias_create
 
+
 class BasePortAliasForm(forms.SelfHandlingForm):
     """
     """
@@ -16,8 +17,8 @@ class BasePortAliasForm(forms.SelfHandlingForm):
         label=_("Id"), widget=forms.HiddenInput, required=False)
     alias_name = forms.CharField(label=_("Name"),)
     protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.PROTOCOL_CHOICES)
-    ports = forms.IntegerField(label=_("Port Numbers"))
+        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES)
+    port = forms.IntegerField(label=_("Port Number"))
 
 
 class CreatePortAliasForm(BasePortAliasForm):

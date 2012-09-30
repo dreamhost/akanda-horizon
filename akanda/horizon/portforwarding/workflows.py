@@ -24,6 +24,7 @@ def get_port_aliases():
 def get_instances(request):
     return server_list(request)
 
+
 class DetailsAction(workflows.Action):
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
@@ -64,7 +65,6 @@ class PortsAction(workflows.Action):
 
     def __init__(self, *args, **kwargs):
         super(PortsAction, self).__init__(*args, **kwargs)
-        # import pdb; pdb.set_trace()
         # x = get_instances(self.request)
         port_alias_choices = get_port_aliases()
         self.fields['public_port_alias'] = forms.ChoiceField(
@@ -127,7 +127,6 @@ class PortForwardingRule(workflows.Workflow):
         # data.pop('private_ip')
         # PortForwardingRuleManager.create(request, data)
         portforward_post(request, data)
-        
 
 
 class EditPortForwardingRule(workflows.Workflow):

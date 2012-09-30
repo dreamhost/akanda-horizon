@@ -5,6 +5,7 @@ from horizon import forms
 from horizon import messages
 from horizon import exceptions
 
+from akanda.horizon import client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
@@ -14,7 +15,7 @@ class BaseNetworkAliasForm(forms.SelfHandlingForm):
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
     alias_name = forms.CharField(label=_("Name"),)
-    cidr = forms.CharField(label=_("CIDR"))
+    cidr = forms.GenericIPAddressField(label=_("CIDR"))
 
 
 class CreateNetworkAliasForm(BaseNetworkAliasForm):
@@ -22,12 +23,12 @@ class CreateNetworkAliasForm(BaseNetworkAliasForm):
     """
     def handle(self, request, data):
         try:
-            self._create_network_alias(request, data)
+            result = self._create_network_alias(request, data)
             messages.success(
                 request,
                 _('Successfully created network alias: %s') % (
                     data['alias_name'],))
-            return data
+            return result
         except:
             redirect = "%s?tab=%s" % (
                 reverse("horizon:nova:networking:index"),
@@ -36,8 +37,7 @@ class CreateNetworkAliasForm(BaseNetworkAliasForm):
                               redirect=redirect)
 
     def _create_network_alias(self, request, data):
-        from akanda.horizon.fakes import NetworkAliasManager
-        NetworkAliasManager.create(request, data)
+        return client.networkalias_create(request, data)
 
 
 class EditNetworkAliasForm(BaseNetworkAliasForm):

@@ -5,23 +5,22 @@ from horizon import forms
 from horizon import messages
 from horizon import exceptions
 
+from akanda.horizon import client
 from akanda.horizon import common
 from akanda.horizon.tabs import firewall_tab_redirect
-from akanda.horizon.fakes import NetworkAliasManager, PortAliasManager
 
 
-def get_port_aliases():
+def get_port_aliases(request):
     port_aliases = [(port.id, port.alias_name) for port in
-                    PortAliasManager.list_all()]
+                    client.portalias_list(request)]
     port_aliases.insert(0, ('Custom', 'Custom'))
     port_aliases.insert(0, ('', ''))
     return port_aliases
 
 
-def get_networks_alias_choices():
-    networks = [(network.id, network.alias_name) for network in
-                NetworkAliasManager.list_all()]
-    return sorted(networks, key=lambda network: network[1])
+def get_networks_aliases(request):
+    return [(network.id, network.alias_name) for network in
+            client.networkalias_list(request)]
 
 
 class BaseFirewallRuleForm(forms.SelfHandlingForm):
@@ -50,12 +49,12 @@ class BaseFirewallRuleForm(forms.SelfHandlingForm):
 
     def __init__(self, *args, **kwargs):
         super(BaseFirewallRuleForm, self).__init__(*args, **kwargs)
-        port_alias_choices = get_port_aliases()
+        port_alias_choices = get_port_aliases(self.request)
         self.fields['source_port_alias'] = forms.ChoiceField(
             choices=port_alias_choices)
         self.fields['destination_port_alias'] = forms.ChoiceField(
             choices=port_alias_choices)
-        network_alias_choices = get_networks_alias_choices()
+        network_alias_choices = get_networks_aliases(self.request)
         self.fields['source_network_alias'] = forms.ChoiceField(
             choices=network_alias_choices)
         self.fields['destination_network_alias'] = forms.ChoiceField(
@@ -76,21 +75,22 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
                               redirect=redirect)
 
     def _create_firewall_rule(self, request, data):
-        from akanda.horizon.fakes import FirewallRuleManager
-        from akanda.horizon.fakes import PortAliasManager
-        if data['source_port_alias'] != 'Custom':
-            source_port_alias = PortAliasManager.get(
-                request, data['source_port_alias'])
-            data['source_protocol'] = source_port_alias._protocol
-            data['source_public_ports'] = source_port_alias._ports
+        # from akanda.horizon.fakes import FirewallRuleManager
+        # from akanda.horizon.fakes import PortAliasManager
+        # if data['source_port_alias'] != 'Custom':
+        #     source_port_alias = PortAliasManager.get(
+        #         request, data['source_port_alias'])
+        #     data['source_protocol'] = source_port_alias._protocol
+        #     data['source_public_ports'] = source_port_alias._ports
 
-        if data['destination_port_alias'] != 'Custom':
-            destination_port_alias = PortAliasManager.get(
-                request, data['destination_port_alias'])
-            data['destination_protocol'] = destination_port_alias._protocol
-            data['destination_public_ports'] = destination_port_alias._ports
+        # if data['destination_port_alias'] != 'Custom':
+        #     destination_port_alias = PortAliasManager.get(
+        #         request, data['destination_port_alias'])
+        #     data['destination_protocol'] = destination_port_alias._protocol
+        #     data['destination_public_ports'] = destination_port_alias._ports
 
-        FirewallRuleManager.create(request, data)
+        # FirewallRuleManager.create(request, data)
+        client.filterrule_create(request, data)
 
 
 class EditFirewallRuleForm(BaseFirewallRuleForm):
@@ -108,6 +108,7 @@ class EditFirewallRuleForm(BaseFirewallRuleForm):
 
     def _update_firewall_rule(self, request, data):
         from akanda.horizon.fakes import FirewallRuleManager
+        from akanda.horizon.fakes import PortAliasManager
         if data['source_port_alias'] != 'Custom':
             source_port_alias = PortAliasManager.get(
                 request, data['source_port_alias'])

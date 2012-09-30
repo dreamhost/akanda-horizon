@@ -2,6 +2,7 @@ from django.utils.translation import ugettext as _
 
 from horizon import tabs
 
+from akanda.horizon import client
 from akanda.horizon.firewall.tables import FirewallRuleTable
 
 
@@ -13,5 +14,4 @@ class FirewallRuleTab(tabs.TableTab):
     # preload = False
 
     def get_firewall_rule_data(self):
-        from akanda.horizon.fakes import FirewallRuleManager
-        return FirewallRuleManager.list_all(self.request)
+        return client.filterrules_list(self.request)
