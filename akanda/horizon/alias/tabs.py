@@ -2,8 +2,9 @@ from django.utils.translation import ugettext as _
 
 from horizon import tabs
 
-from akanda.horizon.client import portalias_list
-from .tables import PortAliasTable, HostAliasTable, NetworkAliasTable
+from akanda.horizon import client
+from akanda.horion.alias.tables import (
+    PortAliasTable, HostAliasTable, NetworkAliasTable)
 
 
 class AliasTab(tabs.TableTab):
@@ -14,14 +15,12 @@ class AliasTab(tabs.TableTab):
     # preload = False
 
     def get_ports_data(self):
-        return portalias_list(self.request)
-        
+        return client.portalias_list(self.request)
 
     def get_hosts_data(self):
         from akanda.horizon.fakes import HostAliasManager
         return HostAliasManager.list_all(self.request)
+        # return client.hostalias_list(self.request)
 
     def get_networks_data(self):
-        from akanda.horizon.fakes import NetworkAliasManager
-        networks = NetworkAliasManager.list_all(self.request)
-        return sorted(networks, key=lambda network: network.alias_name)
+        return client.networkalias_list(self.request)
