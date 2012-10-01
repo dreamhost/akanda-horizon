@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from horizon import tabs
 
 from akanda.horizon import client
-from akanda.horion.alias.tables import (
+from akanda.horizon.alias.tables import (
     PortAliasTable, HostAliasTable, NetworkAliasTable)
 
 
