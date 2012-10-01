@@ -81,7 +81,7 @@ def filterrules_list(request):
 def portalias_create(request, payload):
     portalias = {'portalias': {
         'name': payload['alias_name'],
-        'protocol': payload['tcp'],
+        'protocol': payload['protocol'],
         'port': payload['port'],
     }}
     r = _create(request, 'dhportalias.json', portalias)
