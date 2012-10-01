@@ -23,8 +23,8 @@ import requests
 
 from horizon.api.nova import server_get
 
-from akanda.horizon.common import NEW_PROTOCOL_CHOICES as protocol_choices
-PROTOCOL_CHOICES = dict(protocol_choices)
+from akanda.horizon.common import (
+    NEW_PROTOCOL_CHOICES_DICT, POLICY_CHOICES_DICT)
 
 
 def _mk_url(path):
@@ -45,6 +45,16 @@ def _list(request, path):
     }
     r = requests.get(_mk_url(path), headers=headers)
     return r
+
+
+def _get(request, path, obj_id):
+    headers = {
+        "User-Agent": "python-quantumclient",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Auth-Token": request.user.token.id
+    }
+    return requests.get(_mk_url('%s/%s' % (path, obj_id)), headers=headers)
 
 
 def _create(request, path, payload):
@@ -97,6 +107,12 @@ def networkalias_list(request):
             for item in r.json.get('addressbooks', {})]
 
 
+def networkalias_get(request, obj_id):
+    r = _get(request, 'dhaddressbook', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return r.json.get('addressbook', {})
+
+
 def networkalias_create(request, payload):
     networkalias = {'addressbook': {
         'name': payload['alias_name'],
@@ -113,64 +129,43 @@ def networkalias_delete(request, obj_id):
     return True
 
 
-def filterrules_list(request):
+def filterrule_list(request):
     r = _list(request, 'dhfilterrule')
     return [FilterRule(item['source_alias'], item['source_port'],
                        item['destination_alias'], item['destination_port'],
-                       item['protocol'])
+                       item['protocol'], item['action'], request, item['id'])
             for item in r.json.get('filterrules', {})]
 
 
 def filterrule_create(request, payload):
     filterrule = {'filterrule': {
-        'source_alias': '445f98ed-67bd-4062-96b5-4ede8ac603cf',
-        'destination_alias': '90183916-ee2a-4fb3-8c8d-f1ce4ac7d70a',
-        'source_port': 333,
-        'destination_port': 444,
-        'protocol': 'tcp',
-        'action': payload['action'],
+        'source_alias': payload['source_network_alias'],
+        'destination_alias': payload['destination_network_alias'],
+        'source_port': payload['source_public_port'],
+        'destination_port': payload['destination_public_port'],
+        'protocol': payload['source_protocol'],
+        'action': payload['policy'],
     }}
     r = _create(request, 'dhfilterrule', filterrule)
     r.raise_for_status(allow_redirects=False)
     return True
 
 
-def portforward_get(request):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
-    r = requests.get('http://0.0.0.0:9696/v2.0/dhportforward',
-                     headers=headers)
-    tmp = r.json.get('portforwards', {})
-    portforwards_list = []
-    for item in tmp:
-        portforward_rule = PortForwardingRule(
-            rule_name=item.get('name', 'fake_name'),
-            instance=item.get('instance_id', 'instance_id'),
-            public_port_alias=item.get('public_port_alias', 'pub_port'),
-            public_protocol=item.get('public_protocol', 0),
-            public_ports=item.get('public_port', 'public_port'),
-            private_port_alias=item.get('private_port_alias', 'p_port'),
-            private_protocol=item.get('private_protocol', 0),
-            private_ports=item.get('private_port', 'private_port'),
-            id=item.get('id', 'id'),
-            request=request
-        )
-        portforwards_list.append(portforward_rule)
-    return portforwards_list
+def filterrule_delete(request, obj_id):
+    r = _delete(request, 'dhfilterrule', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return True
 
 
-def portforward_post(request, payload):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
+def portforward_list(request):
+    r = _list(request, 'dhportforward')
+    return [PortForwardingRule(item['name'], item['instance_id'],
+                               item['public_port'], item['protocol'],
+                               item['private_port'], request, item['id'])
+            for item in r.json.get('portforwards', {})]
 
+
+def portforward_create(request, payload):
     portforward = {'portforward': {
         'name': 'rule_name',
         'instance_id': '015eff2961d8430ba0c7c483fcb2da7a',
@@ -178,19 +173,15 @@ def portforward_post(request, payload):
         'public_port': 333,
         'private_port': 444,
         'op_status': 'ACTIVE',
-        'fixed_id': 'fde879e4-07f7-11e2-86a5-080027e60b25'
+        'port_id': '9c9f3fbc-e3fd-4745-892a-91728ceca8e2'
     }}
-
-    r = requests.post('http://0.0.0.0:9696/v2.0/dhportforward',
-                      headers=headers, data=json.dumps(portforward))
-    if r.status_code == requests.codes.created:
-        return True
-    else:
-        return False
+    r = _create(request, 'dhportforward', portforward)
+    r.raise_for_status(allow_redirects=False)
+    return False
 
 
 def get_protocol(value):
-    return PROTOCOL_CHOICES[value]
+    return NEW_PROTOCOL_CHOICES_DICT[value]
 
 
 class Port(object):
@@ -211,130 +202,62 @@ class Network(object):
         self.id = id
 
 
-class PortForwardingRule(object):
-    def __init__(self, rule_name, instance, public_port_alias,
-                 public_protocol, public_ports, private_port_alias,
-                 private_protocol, private_ports, id=None, request=None):
-        self.rule_name = rule_name
-        self.instance = instance
-        self.public_port_alias = public_port_alias
-        self.public_protocol = public_protocol
-        self.public_ports = public_ports
-        self.private_port_alias = private_port_alias
-        self.private_protocol = private_protocol
-        self.private_ports = private_ports
-        self.id = id
-        self.request = request
-
-    @property
-    def public_protocol(self, ):
-        return self._public_protocol
-
-    @public_protocol.setter
-    def public_protocol(self, value):
-        if isinstance(value, basestring):
-            self._public_protocol = int(value)
-        else:
-            self._public_protocol = value
-
-    @property
-    def public_ports(self):
-        return self._public_ports
-
-    @public_ports.setter
-    def public_ports(self, value):
-        if isinstance(value, basestring):
-            self._public_ports = map(int, value.split('-'))
-            self._public_ports.sort()
-        else:
-            self._public_ports = value
-
-    @property
-    def private_protocol(self, ):
-        return self._private_protocol
-
-    @private_protocol.setter
-    def private_protocol(self, value):
-        if isinstance(value, basestring):
-            self._private_protocol = int(value)
-        else:
-            self._private_protocol = value
-
-    @property
-    def private_ports(self):
-        # return self._private_ports
-        return self._private_ports
-
-    @private_ports.setter
-    def private_ports(self, value):
-        if isinstance(value, basestring):
-            self._private_ports = map(int, value.split('-'))
-            self._private_ports.sort()
-        else:
-            self._private_ports = value
-
-    @property
-    def t_instance(self):
-        try:
-            instance = server_get(self.request,
-                                  self.instance)
-            return instance.name
-        except:
-            return '-'
-
-    @property
-    def t_public_ports(self):
-        return "%s %s" % (PROTOCOL_CHOICES[self.public_protocol],
-                          self.public_ports)
-
-    @property
-    def t_private_ports(self):
-        return "%s %s" % (PROTOCOL_CHOICES[self.private_protocol],
-                          self.private_ports)
-
-
 class FilterRule(object):
-    def __init__(self,
-                 source_network_alias,
-                 # source_port_alias,
-                 #source_protocol,
-                 source_public_ports,
-                 destination_network_alias,
-                 # destination_port_alias,
-                 # destination_protocol,
-                 destination_public_ports,
-                 protocol,
-                 policy=1,
-                 id=None):
+    def __init__(self, source_network_alias, source_public_port,
+                 destination_network_alias, destination_public_port,
+                 protocol, policy, request, id=None):
         self.policy = policy
         self.source_network_alias = source_network_alias
-        # self.source_port_alias = source_port_alias
-        # self.source_protocol = source_protocol
-        self.source_public_ports = source_public_ports
+        self.source_public_port = source_public_port
         self.destination_network_alias = destination_network_alias
-        # self.destination_port_alias = destination_port_alias
-        # self.destination_protocol = destination_protocol
-        self.destination_public_ports = destination_public_ports
+        self.destination_public_port = destination_public_port
         self.protocol = protocol
+        self.request = request
         self.id = id
 
-    # def policy(self):
-    #     return POLICY_CHOICES[self._policy]
+    def display_policy(self):
+        return POLICY_CHOICES_DICT[self.policy]
 
-    # def display_source_ip(self):
-    #     network = self.network_manager.get(
-    #         None, self.source_network_alias)
-    #     return network.cidr
+    def display_source_ip(self):
+        network = networkalias_get(self.request, self.source_network_alias)
+        return network.get('cidr')
 
-    # def destination_ip(self):
-    #     network = self.network_manager.get(
-    #         None, self.destination_network_alias)
-    #     return network.cidr
+    def display_destination_ip(self):
+        network = networkalias_get(self.request,
+                                   self.destination_network_alias)
+        return network.get('cidr')
 
     def display_source_port(self):
-        return "%s %s" % (
-            get_protocol(self.protocol), self.source_public_ports)
+        return "%s %s" % (get_protocol(self.protocol),
+                          self.source_public_port)
 
     def display_destination_port(self):
-        return "%s %s" % (
-            get_protocol(self.protocol), self.destination_public_ports)
+        return "%s %s" % (get_protocol(self.protocol),
+                          self.destination_public_port)
+
+
+class PortForwardingRule(object):
+    def __init__(self, rule_name, instance_id, public_port,
+                 protocol, private_port, request, id=None):
+        self.rule_name = rule_name
+        self.instance_id = instance_id
+        self.public_port = public_port
+        self.protocol = protocol
+        self.private_port = private_port
+        self.request = request
+        self.id = id
+
+    def display_public_port(self):
+        return "%s %s" % (get_protocol(self.protocol),
+                          self.public_port)
+
+    def display_private_port(self):
+        return "%s %s" % (get_protocol(self.protocol),
+                          self.private_port)
+
+    def display_instance(self):
+        try:
+            instance = server_get(self.request, self.instance_id)
+            return instance.name
+        except:
+            return '--'

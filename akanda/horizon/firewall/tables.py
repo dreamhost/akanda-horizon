@@ -3,6 +3,8 @@ from django.utils.translation import ugettext as _
 
 from horizon import tables
 
+from akanda.horizon import client
+
 
 class Delete(tables.DeleteAction):
     name = 'delete'
@@ -17,8 +19,7 @@ class Delete(tables.DeleteAction):
         return "%s?tab=%s" % (url, firewall_tab_redirect())
 
     def delete(self, request, obj_id):
-        from akanda.horizon.fakes import FirewallRuleManager
-        FirewallRuleManager.delete(request, obj_id)
+        client.filterrule_delete(request, obj_id)
 
 
 class Create(tables.LinkAction):
@@ -36,13 +37,13 @@ class Edit(tables.LinkAction):
 
 
 class FirewallRuleTable(tables.DataTable):
-    policy = tables.Column('policy', verbose_name=_("Policy"))
+    policy = tables.Column('display_policy', verbose_name=_("Policy"))
     source_ip = tables.Column(
-        'source_ip', verbose_name=_("Source IP"))
+        'display_source_ip', verbose_name=_("Source IP"))
     source_ports = tables.Column(
         'display_source_port', verbose_name=_("Source Port"))
     destination_ip = tables.Column(
-        'destination_ip', verbose_name=_("Destionation IP"))
+        'display_destination_ip', verbose_name=_("Destionation IP"))
     destination_ports = tables.Column(
         'display_destination_port', verbose_name=_("Destionation Port"))
 

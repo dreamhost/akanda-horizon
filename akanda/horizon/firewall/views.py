@@ -57,10 +57,10 @@ class EditFirewallRuleView(forms.ModalFormView):
         }
         if rule.source_port_alias == 'Custom':
             initial_data['source_protocol'] = rule._source_protocol
-            initial_data['source_public_ports'] = rule.source_public_ports
+            initial_data['source_public_port'] = rule.source_public_port
 
         if rule.destination_port_alias == 'Custom':
             initial_data['destination_protocol'] = rule._destination_protocol
-            initial_data['destination_public_ports'] = \
-                rule.destination_public_ports
+            initial_data['destination_public_port'] = \
+                rule.destination_public_port
         return initial_data
