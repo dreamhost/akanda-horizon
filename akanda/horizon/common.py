@@ -14,7 +14,11 @@ NEW_PROTOCOL_CHOICES = (
     ('tcp+udp', 'TCP+UDP'),
 )
 
+NEW_PROTOCOL_CHOICES_DICT = dict(NEW_PROTOCOL_CHOICES)
+
 POLICY_CHOICES = (
     ('pass', 'Allow'),
     ('block', 'Deny'),
 )
+
+POLICY_CHOICES_DICT = dict(POLICY_CHOICES)

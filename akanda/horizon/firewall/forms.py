@@ -31,18 +31,20 @@ class BaseFirewallRuleForm(forms.SelfHandlingForm):
     source_port_alias = forms.ChoiceField(
         label=_("Port Alias"), choices=())
     source_protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.PROTOCOL_CHOICES, required=False)
-    source_public_ports = forms.CharField(
-        label=_("Public Ports"), required=False)
+        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES,
+        required=False)
+    source_public_port = forms.CharField(
+        label=_("Public Port"), required=False)
 
     destination_network_alias = forms.ChoiceField(
         label=_("Network Alias"), choices=())
     destination_port_alias = forms.ChoiceField(
         label=_("Port Alias"), choices=())
     destination_protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.PROTOCOL_CHOICES, required=False)
-    destination_public_ports = forms.CharField(
-        label=_("Public Ports"), required=False)
+        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES,
+        required=False)
+    destination_public_port = forms.CharField(
+        label=_("Public Port"), required=False)
 
     policy = forms.ChoiceField(
         label=_("Policy"), choices=common.POLICY_CHOICES)
@@ -64,9 +66,9 @@ class BaseFirewallRuleForm(forms.SelfHandlingForm):
 class CreateFirewallRuleForm(BaseFirewallRuleForm):
     def handle(self, request, data):
         try:
-            self._create_firewall_rule(request, data)
+            result = self._create_firewall_rule(request, data)
             messages.success(request, _('Successfully created firewall rule'))
-            return data
+            return result
         except:
             redirect = "%s?tab=%s" % (
                 reverse("horizon:nova:networking:index"),
@@ -81,16 +83,16 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
         #     source_port_alias = PortAliasManager.get(
         #         request, data['source_port_alias'])
         #     data['source_protocol'] = source_port_alias._protocol
-        #     data['source_public_ports'] = source_port_alias._ports
+        #     data['source_public_port'] = source_port_alias._ports
 
         # if data['destination_port_alias'] != 'Custom':
         #     destination_port_alias = PortAliasManager.get(
         #         request, data['destination_port_alias'])
         #     data['destination_protocol'] = destination_port_alias._protocol
-        #     data['destination_public_ports'] = destination_port_alias._ports
+        #     data['destination_public_port'] = destination_port_alias._ports
 
         # FirewallRuleManager.create(request, data)
-        client.filterrule_create(request, data)
+        return client.filterrule_create(request, data)
 
 
 class EditFirewallRuleForm(BaseFirewallRuleForm):
@@ -113,12 +115,12 @@ class EditFirewallRuleForm(BaseFirewallRuleForm):
             source_port_alias = PortAliasManager.get(
                 request, data['source_port_alias'])
             data['source_protocol'] = source_port_alias._protocol
-            data['source_public_ports'] = source_port_alias._ports
+            data['source_public_port'] = source_port_alias._ports
 
         if data['destination_port_alias'] != 'Custom':
             destination_port_alias = PortAliasManager.get(
                 request, data['destination_port_alias'])
             data['destination_protocol'] = destination_port_alias._protocol
-            data['destination_public_ports'] = destination_port_alias._ports
+            data['destination_public_port'] = destination_port_alias._ports
 
         FirewallRuleManager.update(request, data)

@@ -37,11 +37,11 @@ class Edit(tables.LinkAction):
 
 class PortForwardingTable(tables.DataTable):
     rule_name = tables.Column('rule_name', verbose_name=_("Rule Name"))
-    instances = tables.Column('t_instance', verbose_name=_("Instance"))
+    instances = tables.Column('display_instance', verbose_name=_("Instance"))
     public_ports = tables.Column(
-        't_public_ports', verbose_name=_("Public Ports"))
+        'display_public_port', verbose_name=_("Public Port"))
     private_ports = tables.Column(
-        't_private_ports', verbose_name=_("Private Ports"))
+        'display_private_port', verbose_name=_("Private Port"))
 
     class Meta:
         name = "portforwarding"

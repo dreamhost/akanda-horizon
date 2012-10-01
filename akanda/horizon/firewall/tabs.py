@@ -14,4 +14,4 @@ class FirewallRuleTab(tabs.TableTab):
     # preload = False
 
     def get_firewall_rule_data(self):
-        return client.filterrules_list(self.request)
+        return client.filterrule_list(self.request)

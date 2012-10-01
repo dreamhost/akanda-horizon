@@ -7,7 +7,7 @@ from horizon.api.nova import server_list
 
 from akanda.horizon import common
 from akanda.horizon.tabs import portforwarding_tab_redirect
-from akanda.horizon.client import portforward_post
+from akanda.horizon import client
 
 from akanda.horizon.fakes import INSTANCES_FAKE_DATA
 from akanda.horizon.fakes import PortAliasManager
@@ -102,8 +102,7 @@ class PortForwardingRule(workflows.Workflow):
 
     def handle(self, request, data):
         try:
-            self._create_portforwarding_rule(request, data)
-            return data
+            return self._create_portforwarding_rule(request, data)
         except:
             exceptions.handle(request)
             return False
@@ -126,7 +125,7 @@ class PortForwardingRule(workflows.Workflow):
         # data.pop('public_ip')
         # data.pop('private_ip')
         # PortForwardingRuleManager.create(request, data)
-        portforward_post(request, data)
+        return client.portforward_create(request, data)
 
 
 class EditPortForwardingRule(workflows.Workflow):
