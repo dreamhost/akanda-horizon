@@ -58,24 +58,20 @@ def _create(request, path, payload):
     return r
 
 
+def _delete(request, path, obj_id):
+    headers = {
+        "User-Agent": "python-quantumclient",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-Auth-Token": request.user.token.id
+    }
+    return requests.delete(_mk_url('%s/%s' % (path, obj_id)), headers=headers)
+
+
 def portalias_list(request):
-    r = _list(request, 'dhportalias.json')
+    r = _list(request, 'dhportalias')
     return [Port(item['name'], item['protocol'], item['port'], item['id'])
             for item in r.json.get('portaliases', {})]
-
-
-def networkalias_list(request):
-    r = _list(request, 'dhaddressbook.json')
-    return [Network(item['name'], item['cidr'], item['id'])
-            for item in r.json.get('addressbooks', {})]
-
-
-def filterrules_list(request):
-    r = _list(request, 'dhfilterrule.json')
-    return [FilterRule(item['source_alias'], item['source_port'],
-                       item['destination_alias'], item['destination_port'],
-                       item['protocol'])
-            for item in r.json.get('filterrules', {})]
 
 
 def portalias_create(request, payload):
@@ -84,9 +80,21 @@ def portalias_create(request, payload):
         'protocol': payload['protocol'],
         'port': payload['port'],
     }}
-    r = _create(request, 'dhportalias.json', portalias)
+    r = _create(request, 'dhportalias', portalias)
     r.raise_for_status(allow_redirects=False)
     return True
+
+
+def portalias_delete(request, obj_id):
+    r = _delete(request, 'dhportalias', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return True
+
+
+def networkalias_list(request):
+    r = _list(request, 'dhaddressbook')
+    return [Network(item['name'], item['cidr'], item['id'])
+            for item in r.json.get('addressbooks', {})]
 
 
 def networkalias_create(request, payload):
@@ -94,21 +102,35 @@ def networkalias_create(request, payload):
         'name': payload['alias_name'],
         'cidr': payload['cidr'],
     }}
-    r = _create(request, 'dhaddressbook.json', networkalias)
+    r = _create(request, 'dhaddressbook', networkalias)
     r.raise_for_status(allow_redirects=False)
     return True
 
 
+def networkalias_delete(request, obj_id):
+    r = _delete(request, 'dhaddressbook', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return True
+
+
+def filterrules_list(request):
+    r = _list(request, 'dhfilterrule')
+    return [FilterRule(item['source_alias'], item['source_port'],
+                       item['destination_alias'], item['destination_port'],
+                       item['protocol'])
+            for item in r.json.get('filterrules', {})]
+
+
 def filterrule_create(request, payload):
     filterrule = {'filterrule': {
-        'source_alias': '1f76d8ba-9b49-4191-ad6a-afec02ebf0ee',
-        'destination_alias': '591e9f84-c2ca-44da-8321-7f5b13dde476',
+        'source_alias': '445f98ed-67bd-4062-96b5-4ede8ac603cf',
+        'destination_alias': '90183916-ee2a-4fb3-8c8d-f1ce4ac7d70a',
         'source_port': 333,
         'destination_port': 444,
         'protocol': 'tcp',
-        'action': 'action',
+        'action': payload['action'],
     }}
-    r = _create(request, 'dhfilterrule.json', filterrule)
+    r = _create(request, 'dhfilterrule', filterrule)
     r.raise_for_status(allow_redirects=False)
     return True
 
@@ -120,7 +142,7 @@ def portforward_get(request):
         "Accept": "application/json",
         "X-Auth-Token": request.user.token.id
     }
-    r = requests.get('http://0.0.0.0:9696/v2.0/dhportforward.json',
+    r = requests.get('http://0.0.0.0:9696/v2.0/dhportforward',
                      headers=headers)
     tmp = r.json.get('portforwards', {})
     portforwards_list = []
@@ -159,7 +181,7 @@ def portforward_post(request, payload):
         'fixed_id': 'fde879e4-07f7-11e2-86a5-080027e60b25'
     }}
 
-    r = requests.post('http://0.0.0.0:9696/v2.0/dhportforward.json',
+    r = requests.post('http://0.0.0.0:9696/v2.0/dhportforward',
                       headers=headers, data=json.dumps(portforward))
     if r.status_code == requests.codes.created:
         return True

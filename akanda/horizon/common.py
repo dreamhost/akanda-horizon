@@ -15,6 +15,6 @@ NEW_PROTOCOL_CHOICES = (
 )
 
 POLICY_CHOICES = (
-    (0, 'Allow'),
-    (1, 'Deny'),
+    ('pass', 'Allow'),
+    ('block', 'Deny'),
 )
