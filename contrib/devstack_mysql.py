@@ -101,15 +101,15 @@ def populate_portforwards_table(ipallocations_id, tenant_id):
             {'tenant_id': tenant_id, 'id': uuid.uuid4(), 'name': 'foobar1',
              'public_port': '80', 'instance_id': uuid.uuid4(),
              'private_port': '800', 'fixed_id': ipallocations_id,
-             'op_status': 'ACTIVE', 'protocol': 'tcp'},
+             'protocol': 'tcp'},
             {'tenant_id': tenant_id, 'id': uuid.uuid4(), 'name': 'foobar2',
              'public_port': '90', 'instance_id': uuid.uuid4(),
              'private_port': '900', 'fixed_id': ipallocations_id,
-             'op_status': 'ACTIVE', 'protocol': 'tcp'},
+             'protocol': 'tcp'},
             {'tenant_id': tenant_id, 'id': uuid.uuid4(), 'name': 'foobar3',
              'public_port': '100', 'instance_id': uuid.uuid4(),
              'private_port': '1000', 'fixed_id': ipallocations_id,
-             'op_status': 'ACTIVE', 'protocol': 'udp'},
+              'protocol': 'udp'},
 
         ])
 
