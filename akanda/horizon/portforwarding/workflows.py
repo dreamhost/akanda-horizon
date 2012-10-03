@@ -9,20 +9,17 @@ from akanda.horizon import common
 from akanda.horizon.tabs import portforwarding_tab_redirect
 from akanda.horizon import client
 
-from akanda.horizon.fakes import INSTANCES_FAKE_DATA
-from akanda.horizon.fakes import PortAliasManager
 
-
-def get_port_aliases():
+def get_port_aliases(request):
     port_aliases = [(port.id, port.alias_name) for port in
-                    PortAliasManager.list_all()]
+                    client.portalias_list(request)]
     port_aliases.insert(0, ('Custom', 'Custom'))
     port_aliases.insert(0, ('', ''))
     return port_aliases
 
 
 def get_instances(request):
-    return server_list(request)
+    return [(item.id, item.name) for item in server_list(request)]
 
 
 class DetailsAction(workflows.Action):
@@ -30,7 +27,7 @@ class DetailsAction(workflows.Action):
         label=_("Id"), widget=forms.HiddenInput, required=False)
     rule_name = forms.CharField(label=_("Name"))
     instance = forms.ChoiceField(
-        label=_("Instance"), choices=INSTANCES_FAKE_DATA)
+        label=_("Instance"), choices=())
 
     class Meta:
         name = _("Details")
@@ -39,6 +36,11 @@ class DetailsAction(workflows.Action):
         help_text = _("You can set up port forwarding rules here by picking "
                       "one of your instances, then which ports you want to "
                       "redirect.")
+
+    def __init__(self, request, context, *args, **kwargs):
+        super(DetailsAction, self).__init__(request, context, *args, **kwargs)
+        self.fields['instance'] = forms.ChoiceField(
+            choices=get_instances(request))
 
 
 class Details(workflows.Step):
@@ -51,13 +53,15 @@ class PortsAction(workflows.Action):
     public_ip = forms.CharField(label=_("Public Ip"), required=False)
     public_port_alias = forms.ChoiceField(label=_("Port Alias"))
     public_protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.PROTOCOL_CHOICES, required=False)
-    public_ports = forms.CharField(label=_("Public Ports"), required=False)
+        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES,
+        required=False)
+    public_port = forms.CharField(label=_("Public Port"), required=False)
     private_ip = forms.CharField(label=_("Private Ip"), required=False)
     private_port_alias = forms.ChoiceField(label=_("Port Alias"))
     private_protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.PROTOCOL_CHOICES, required=False)
-    private_ports = forms.CharField(label=_("Public Ports"), required=False)
+        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES,
+        required=False)
+    private_port = forms.CharField(label=_("Private Port"), required=False)
 
     class Meta:
         name = _("Ports")
@@ -65,8 +69,7 @@ class PortsAction(workflows.Action):
 
     def __init__(self, *args, **kwargs):
         super(PortsAction, self).__init__(*args, **kwargs)
-        # x = get_instances(self.request)
-        port_alias_choices = get_port_aliases()
+        port_alias_choices = get_port_aliases(self.request)
         self.fields['public_port_alias'] = forms.ChoiceField(
             choices=port_alias_choices)
         self.fields['private_port_alias'] = forms.ChoiceField(
@@ -79,11 +82,11 @@ class Ports(workflows.Step):
     contributes = (  # "public_ip",
                      "public_port_alias",
                      "public_protocol",
-                     "public_ports",
+                     "public_port",
                      # "private_ip",
                      "private_port_alias",
                      "private_protocol",
-                     "private_ports")
+                     "private_port")
     template_name = "akanda/portforwarding/_form_fields.html"
 
 
@@ -114,13 +117,13 @@ class PortForwardingRule(workflows.Workflow):
             public_port_alias = PortAliasManager.get(
                 request, data['public_port_alias'])
             data['public_protocol'] = public_port_alias._protocol
-            data['public_ports'] = public_port_alias._ports
+            data['public_port'] = public_port_alias._ports
 
         if data['private_port_alias'] != 'Custom':
             private_port_alias = PortAliasManager.get(
                 request, data['private_port_alias'])
             data['private_protocol'] = private_port_alias._protocol
-            data['private_ports'] = private_port_alias._ports
+            data['private_port'] = private_port_alias._ports
 
         # data.pop('public_ip')
         # data.pop('private_ip')
@@ -157,12 +160,12 @@ class EditPortForwardingRule(workflows.Workflow):
             public_port_alias = PortAliasManager.get(
                 request, data['public_port_alias'])
             data['public_protocol'] = public_port_alias._protocol
-            data['public_ports'] = public_port_alias._ports
+            data['public_port'] = public_port_alias._ports
 
         if data['private_port_alias'] != 'Custom':
             private_port_alias = PortAliasManager.get(
                 request, data['private_port_alias'])
             data['private_protocol'] = private_port_alias._protocol
-            data['private_ports'] = private_port_alias._ports
+            data['private_port'] = private_port_alias._ports
 
         PortForwardingRuleManager.update(request, data)

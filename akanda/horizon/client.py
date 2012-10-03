@@ -21,8 +21,10 @@ import json
 
 import requests
 
-from horizon.api.nova import server_get
+from horizon.api import nova
+from horizon.api import quantum
 
+from quantumclient.common.exceptions import PortNotFoundClient
 from akanda.horizon.common import (
     NEW_PROTOCOL_CHOICES_DICT, POLICY_CHOICES_DICT)
 
@@ -166,18 +168,30 @@ def portforward_list(request):
 
 
 def portforward_create(request, payload):
+    port_list = quantum.port_list(request)
+    try:
+        port = port_list[0]
+    except IndexError:
+        raise PortNotFoundClient
+
     portforward = {'portforward': {
-        'name': 'rule_name',
-        'instance_id': '015eff2961d8430ba0c7c483fcb2da7a',
-        'protocol': 'tcp',
-        'public_port': 333,
-        'private_port': 444,
-        'op_status': 'ACTIVE',
-        'port_id': '9c9f3fbc-e3fd-4745-892a-91728ceca8e2'
+        'name': payload['rule_name'],
+        'instance_id': payload['instance'],
+        'protocol': payload['public_protocol'],
+        'public_port': payload['public_port'],
+        'private_port': payload['private_port'],
+        'port_id': port.id
     }}
+
     r = _create(request, 'dhportforward', portforward)
     r.raise_for_status(allow_redirects=False)
-    return False
+    return True
+
+
+def portforward_delete(request, obj_id):
+    r = _delete(request, 'dhportforward', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return True
 
 
 def get_protocol(value):
@@ -257,7 +271,7 @@ class PortForwardingRule(object):
 
     def display_instance(self):
         try:
-            instance = server_get(self.request, self.instance_id)
+            instance = nova.server_get(self.request, self.instance_id)
             return instance.name
         except:
             return '--'
