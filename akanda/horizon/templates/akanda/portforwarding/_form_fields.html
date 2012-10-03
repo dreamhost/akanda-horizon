@@ -28,12 +28,13 @@
  <div class="left">
    <fieldset>
      {% include "akanda/common/_form_field_snippet.html" with field=form.public_ip %}
-     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.public_port_alias protocol=form.public_protocol ports=form.public_ports class="public-port" %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.public_port_alias protocol=form.public_protocol port=form.public_port class="public-port" %}
    </fieldset>
  </div>
  <div class="right">
    <fieldset>
      {% include "akanda/common/_form_field_snippet.html" with field=form.private_ip %}
-     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.private_port_alias protocol=form.private_protocol ports=form.private_ports class="private-port"%}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.private_port_alias protocol=form.private_protocol port=form.private_port class="private-port"%}
    </fieldset>
  </div>
+

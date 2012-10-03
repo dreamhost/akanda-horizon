@@ -30,7 +30,7 @@
    <h3>Source</h3>
    <fieldset>
      {% include "akanda/common/_form_field_snippet.html" with field=form.source_network_alias %}
-     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.source_port_alias protocol=form.source_protocol ports=form.source_public_port class="source-port" %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.source_port_alias protocol=form.source_protocol port=form.source_public_port class="source-port" %}
      {% include "akanda/common/_form_field_snippet.html" with field=form.policy %}
    </fieldset>
  </div>
@@ -38,7 +38,7 @@
    <h3>Destination</h3>
    <fieldset>
      {% include "akanda/common/_form_field_snippet.html" with field=form.destination_network_alias %}
-     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.destination_port_alias protocol=form.destination_protocol ports=form.destination_public_port class="destination-port" %}
+     {% include "akanda/common/_port_alias_snippet.html" with port_alias=form.destination_port_alias protocol=form.destination_protocol port=form.destination_public_port class="destination-port" %}
    </fieldset>
 </div>
 

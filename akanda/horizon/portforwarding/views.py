@@ -43,14 +43,14 @@ class EditPortForwardingRuleView(workflows.WorkflowView):
                         'private_port_alias': rule.private_port_alias}
 
         initial_data['public_protocol'] = ''
-        initial_data['public_ports'] = ''
+        initial_data['public_port'] = ''
         if rule.public_port_alias == 'Custom':
             initial_data['public_protocol'] = rule.public_protocol
-            initial_data['public_ports'] = rule.public_ports
+            initial_data['public_port'] = rule.public_port
 
         initial_data['private_protocol'] = ''
-        initial_data['private_ports'] = ''
+        initial_data['private_port'] = ''
         if rule.private_port_alias == 'Custom':
             initial_data['private_protocol'] = rule.private_protocol
-            initial_data['private_ports'] = rule.private_ports
+            initial_data['private_port'] = rule.private_port
         return initial_data
