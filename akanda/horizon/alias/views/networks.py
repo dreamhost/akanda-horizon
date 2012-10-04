@@ -6,6 +6,7 @@ from horizon import forms
 
 from akanda.horizon.alias.forms import (
     CreateNetworkAliasForm, EditNetworkAliasForm)
+from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
@@ -31,8 +32,7 @@ class EditNetworkAliasView(forms.ModalFormView):
     def _get_object(self):
         if not hasattr(self, "_object"):
             try:
-                from akanda.horizon.fakes import NetworkAliasManager
-                self._object = NetworkAliasManager.get(
+                self._object = quantum_extensions_client.networkalias_get(
                     self.request, self.kwargs['network_alias_id'])
             except:
                 msg = _('Unable to retrieve network alias.')
@@ -48,5 +48,5 @@ class EditNetworkAliasView(forms.ModalFormView):
     def get_initial(self):
         network_alias = self._get_object()
         return {'id': self.kwargs['network_alias_id'],
-                'alias_name': network_alias.alias_name,
-                'cidr': network_alias.cidr}
+                'alias_name': network_alias['name'],
+                'cidr': network_alias['cidr']}

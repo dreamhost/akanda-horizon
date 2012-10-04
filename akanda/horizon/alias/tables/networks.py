@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 
 from horizon import tables
 
-from akanda.horizon import client
+from akanda.horizon.api import quantum_extensions_client
 
 
 class Delete(tables.DeleteAction):
@@ -13,7 +13,7 @@ class Delete(tables.DeleteAction):
     success_url = reverse_lazy('horizon:nova:networking:index')
 
     def delete(self, request, obj_id):
-        client.networkalias_delete(request, obj_id)
+        quantum_extensions_client.networkalias_delete(request, obj_id)
 
 
 class Create(tables.LinkAction):

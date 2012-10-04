@@ -5,14 +5,14 @@ from horizon import forms
 from horizon import messages
 from horizon import exceptions
 
-from akanda.horizon import client
+from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon import common
 from akanda.horizon.tabs import firewall_tab_redirect
 
 
 def get_port_aliases(request):
     port_aliases = [(port.id, port.alias_name) for port in
-                    client.portalias_list(request)]
+                    quantum_extensions_client.portalias_list(request)]
     port_aliases.insert(0, ('Custom', 'Custom'))
     port_aliases.insert(0, ('', ''))
     return port_aliases
@@ -20,7 +20,7 @@ def get_port_aliases(request):
 
 def get_networks_aliases(request):
     return [(network.id, network.alias_name) for network in
-            client.networkalias_list(request)]
+            quantum_extensions_client.networkalias_list(request)]
 
 
 class BaseFirewallRuleForm(forms.SelfHandlingForm):
@@ -92,7 +92,7 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
         #     data['destination_public_port'] = destination_port_alias._ports
 
         # FirewallRuleManager.create(request, data)
-        return client.filterrule_create(request, data)
+        return quantum_extensions_client.filterrule_create(request, data)
 
 
 class EditFirewallRuleForm(BaseFirewallRuleForm):

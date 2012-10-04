@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 
 from horizon import tables
 
-from akanda.horizon import client
+from akanda.horizon.api import quantum_extensions_client
 
 
 class Delete(tables.DeleteAction):
@@ -19,7 +19,7 @@ class Delete(tables.DeleteAction):
         return "%s?tab=%s" % (url, firewall_tab_redirect())
 
     def delete(self, request, obj_id):
-        client.filterrule_delete(request, obj_id)
+        quantum_extensions_client.filterrule_delete(request, obj_id)
 
 
 class Create(tables.LinkAction):

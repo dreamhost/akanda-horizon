@@ -7,12 +7,12 @@ from horizon.api.nova import server_list
 
 from akanda.horizon import common
 from akanda.horizon.tabs import portforwarding_tab_redirect
-from akanda.horizon import client
+from akanda.horizon.api import quantum_extensions_client
 
 
 def get_port_aliases(request):
     port_aliases = [(port.id, port.alias_name) for port in
-                    client.portalias_list(request)]
+                    quantum_extensions_client.portalias_list(request)]
     port_aliases.insert(0, ('Custom', 'Custom'))
     port_aliases.insert(0, ('', ''))
     return port_aliases
@@ -128,7 +128,7 @@ class PortForwardingRule(workflows.Workflow):
         # data.pop('public_ip')
         # data.pop('private_ip')
         # PortForwardingRuleManager.create(request, data)
-        return client.portforward_create(request, data)
+        return quantum_extensions_client.portforward_create(request, data)
 
 
 class EditPortForwardingRule(workflows.Workflow):

@@ -2,7 +2,7 @@ from django.utils.translation import ugettext as _
 
 from horizon import tabs
 
-from akanda.horizon import client
+from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon.firewall.tables import FirewallRuleTable
 
 
@@ -14,4 +14,4 @@ class FirewallRuleTab(tabs.TableTab):
     # preload = False
 
     def get_firewall_rule_data(self):
-        return client.filterrule_list(self.request)
+        return quantum_extensions_client.filterrule_list(self.request)

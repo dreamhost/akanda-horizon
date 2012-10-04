@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block form_id %}port_alias_rule_form{% endblock %}
-{% block form_action %}{% url horizon:nova:networking:alias:ports:edit port_alias.id }{% endblock %}
+{% block form_action %}{% url horizon:nova:networking:alias:ports:edit port_alias.id %}{% endblock %}
 
 {% block modal-header %}{% trans "Edit a Port Alias" %}{% endblock %}
 {% block modal_id %}port_alias_rule_modal{% endblock %}
@@ -23,4 +23,3 @@
   <input class="btn btn-primary pull-right" type="submit" value="{% trans "Update Port Alias" %}" />
   <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
-
