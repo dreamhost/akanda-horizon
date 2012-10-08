@@ -1,0 +1,23 @@
+{% for hidden in form.hidden_fields %}
+  {{ hidden }}
+{% endfor %}
+{% if form.non_field_errors %}
+  <div class="alert alert-message alert-error">
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+
+ <div class="left">
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.public_protocol %}
+{% include "akanda/common/_form_field_snippet.html" with field=form.public_port %}
+   </fieldset>
+ </div>
+
+ <div class="right">
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.private_protocol %}
+{% include "akanda/common/_form_field_snippet.html" with field=form.private_port %}
+   </fieldset>
+ </div>

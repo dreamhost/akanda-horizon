@@ -262,6 +262,12 @@ def filterrule_list(request):
             for item in r.json.get('filterrules', {})]
 
 
+def filterrule_get(request, obj_id):
+    r = _get(request, 'dhfilterrule', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return r.json.get('filterrule', {})
+
+
 def filterrule_create(request, payload):
     filterrule = {'filterrule': {
         'source_alias': payload['source_network_alias'],
@@ -272,6 +278,21 @@ def filterrule_create(request, payload):
         'action': payload['policy'],
     }}
     r = _create(request, 'dhfilterrule', filterrule)
+    r.raise_for_status(allow_redirects=False)
+    return True
+
+
+def filterrule_update(request, payload):
+    obj_id = payload.pop('id', '')
+    filterrule = {'filterrule': {
+        'source_alias': payload['source_network_alias'],
+        'destination_alias': payload['destination_network_alias'],
+        'source_port': payload['source_public_port'],
+        'destination_port': payload['destination_public_port'],
+        'protocol': payload['source_protocol'],
+        'action': payload['policy'],
+    }}
+    r = _put(request, 'dhfilterrule', obj_id, filterrule)
     r.raise_for_status(allow_redirects=False)
     return True
 
@@ -288,6 +309,12 @@ def portforward_list(request):
                                item['public_port'], item['protocol'],
                                item['private_port'], request, item['id'])
             for item in r.json.get('portforwards', {})]
+
+
+def portforward_get(request, obj_id):
+    r = _get(request, 'dhportforward', obj_id)
+    r.raise_for_status(allow_redirects=False)
+    return r.json.get('portforward', {})
 
 
 def portforward_create(request, payload):
@@ -307,6 +334,21 @@ def portforward_create(request, payload):
     }}
 
     r = _create(request, 'dhportforward', portforward)
+    r.raise_for_status(allow_redirects=False)
+    return True
+
+
+def portforward_update(request, payload):
+    obj_id = payload.pop('id', '')
+    portforward = {'portforward': {
+        'name': payload['rule_name'],
+        'instance_id': payload['instance'],
+        'protocol': payload['public_protocol'],
+        'public_port': payload['public_port'],
+        'private_port': payload['private_port'],
+        'port_id': payload['port_id']
+    }}
+    r = _put(request, 'dhportforward', obj_id, portforward)
     r.raise_for_status(allow_redirects=False)
     return True
 

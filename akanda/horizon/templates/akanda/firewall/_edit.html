@@ -8,10 +8,11 @@
 {% block modal_id %}edit_firewall_rule_modal{% endblock %}
 
 {% block modal-body %}
-    {% include "akanda/firewall/_form_fields.html" %}
+    {% include "akanda/firewall/_edit_form_fields.html" %}
 {% endblock %}
 
 {% block modal-footer %}
   <input class="btn btn-primary pull-right" type="submit" value="{% trans "Edit Rule" %}" />
   <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
+

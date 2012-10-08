@@ -1,0 +1,27 @@
+{% load compress %}
+{% for hidden in form.hidden_fields %}
+  {{ hidden }}
+{% endfor %}
+{% if form.non_field_errors %}
+  <div class="alert alert-message alert-error">
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+ <div class="left">
+   <h3>Source</h3>
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.source_network_alias %}
+     {% include "akanda/common/_form_field_snippet.html" with field=form.source_protocol %}
+     {% include "akanda/common/_form_field_snippet.html" with field=form.source_public_port %}
+     {% include "akanda/common/_form_field_snippet.html" with field=form.policy %}
+   </fieldset>
+ </div>
+ <div class="right">
+   <h3>Destination</h3>
+   <fieldset>
+     {% include "akanda/common/_form_field_snippet.html" with field=form.destination_network_alias %}
+     {% include "akanda/common/_form_field_snippet.html" with field=form.destination_protocol %}
+     {% include "akanda/common/_form_field_snippet.html" with field=form.destination_public_port %}
+   </fieldset>
+</div>

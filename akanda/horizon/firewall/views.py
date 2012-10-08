@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from horizon import exceptions
 from horizon import forms
 
+from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon.tabs import firewall_tab_redirect
 from akanda.horizon.firewall.forms import (
     CreateFirewallRuleForm, EditFirewallRuleForm)
@@ -31,8 +32,7 @@ class EditFirewallRuleView(forms.ModalFormView):
     def _get_object(self, ):
         if not hasattr(self, "_object"):
             try:
-                from akanda.horizon.fakes import FirewallRuleManager
-                self._object = FirewallRuleManager.get(
+                self._object = quantum_extensions_client.filterrule_get(
                     self.request, self.kwargs['firewall_rule_id'])
             except:
                 msg = _('Unable to retrieve firewall rule.')
@@ -49,18 +49,13 @@ class EditFirewallRuleView(forms.ModalFormView):
         rule = self._get_object()
         initial_data = {
             'id': self.kwargs['firewall_rule_id'],
-            'source_network_alias': rule.source_network_alias,
-            'source_port_alias': rule.source_port_alias,
-            'destination_network_alias': rule.destination_network_alias,
-            'destination_port_alias': rule.destination_port_alias,
-            'policy': rule._policy
+            'source_network_alias': rule['source_alias'],
+            'source_public_port': rule['source_port'],
+            'source_protocol': rule['protocol'],
+            'destination_network_alias': rule['destination_alias'],
+            'destination_public_port': rule['destination_port'],
+            'destination_protocol': rule['protocol'],
+            'policy': rule['action'],
         }
-        if rule.source_port_alias == 'Custom':
-            initial_data['source_protocol'] = rule._source_protocol
-            initial_data['source_public_port'] = rule.source_public_port
 
-        if rule.destination_port_alias == 'Custom':
-            initial_data['destination_protocol'] = rule._destination_protocol
-            initial_data['destination_public_port'] = \
-                rule.destination_public_port
         return initial_data
