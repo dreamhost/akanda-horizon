@@ -25,7 +25,7 @@ def get_instances(request):
 class DetailsAction(workflows.Action):
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
-    rule_name = forms.CharField(label=_("Name"))
+    rule_name = forms.CharField(label=_("Name"), max_length=255)
     instance = forms.ChoiceField(
         label=_("Instance"), choices=())
 
@@ -50,18 +50,25 @@ class Details(workflows.Step):
 
 
 class PortsAction(workflows.Action):
-    public_ip = forms.CharField(label=_("Public Ip"), required=False)
+    # public_ip = forms.CharField(label=_("Public Ip"), required=False)
     public_port_alias = forms.ChoiceField(label=_("Port Alias"))
-    public_protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES,
-        required=False)
-    public_port = forms.CharField(label=_("Public Port"), required=False)
-    private_ip = forms.CharField(label=_("Private Ip"), required=False)
+    public_protocol = forms.ChoiceField(label=_("Protocol"),
+                                        choices=common.NEW_PROTOCOL_CHOICES,
+                                        required=False)
+    public_port = forms.IntegerField(label=_("Public Port"),
+                                     required=False,
+                                     min_value=1,
+                                     max_value=65536)
+    
+    # private_ip = forms.CharField(label=_("Private Ip"), required=False)
     private_port_alias = forms.ChoiceField(label=_("Port Alias"))
-    private_protocol = forms.ChoiceField(
-        label=_("Protocol"), choices=common.NEW_PROTOCOL_CHOICES,
-        required=False)
-    private_port = forms.CharField(label=_("Private Port"), required=False)
+    private_protocol = forms.ChoiceField(label=_("Protocol"),
+                                         choices=common.NEW_PROTOCOL_CHOICES,
+                                         required=False)
+    private_port = forms.IntegerField(label=_("Private Port"),
+                                      required=False,
+                                      min_value=1,
+                                      max_value=65536)
 
     class Meta:
         name = _("Ports")
@@ -74,6 +81,60 @@ class PortsAction(workflows.Action):
             choices=port_alias_choices)
         self.fields['private_port_alias'] = forms.ChoiceField(
             choices=port_alias_choices)
+
+    def clean(self):
+        cleaned_data = super(PortsAction, self).clean()
+        s_protocol = None
+        d_protocol = None
+
+        msg = u"This field is required."
+
+        if cleaned_data.get('public_port_alias', None):
+            if cleaned_data['public_port_alias'] == 'Custom':
+                if cleaned_data['public_protocol'] is None:
+                    self._errors['public_protocol'] = self.error_class([msg])
+                    del cleaned_data["public_protocol"]
+                else:
+                    s_protocol = cleaned_data['public_protocol']
+                     
+                if cleaned_data['public_port'] is None:
+                    self._errors['public_port'] = self.error_class(
+                        [msg])
+                    del cleaned_data["public_port"]
+            else:
+                 port_alias = quantum_extensions_client.portalias_get(
+                     self.request, cleaned_data['public_port_alias'])
+                 cleaned_data['public_protocol'] = port_alias['protocol']
+                 cleaned_data['public_port'] = port_alias['port']
+                 s_protocol = port_alias['protocol']
+
+        if cleaned_data.get('private_port_alias', None):
+            if cleaned_data['private_port_alias'] == 'Custom':
+                if cleaned_data['private_protocol'] is None:
+                    self._errors['private_protocol'] = self.error_class(
+                        [msg])
+                    del cleaned_data["private_protocol"]
+                else:
+                    d_protocol = cleaned_data["private_protocol"]
+
+                if cleaned_data['private_port'] is None:
+                    self._errors['private_port'] = self.error_class(
+                        [msg])
+                    del cleaned_data["private_port"]
+            else:
+                port_alias = quantum_extensions_client.portalias_get(
+                    self.request, cleaned_data['private_port_alias'])
+                cleaned_data['private_protocol'] = port_alias['protocol']
+                cleaned_data['private_port'] = port_alias['port']  
+                d_protocol = port_alias['protocol']
+
+        if s_protocol  and d_protocol:
+            if s_protocol != d_protocol:
+                raise forms.ValidationError(
+                    "Did not send for 'help' in "
+                    "the subject despite CC'ing yourself.")
+
+        return cleaned_data
 
 
 class Ports(workflows.Step):
@@ -111,24 +172,52 @@ class PortForwardingRule(workflows.Workflow):
             return False
 
     def _create_portforwarding_rule(self, request, data):
-        # from akanda.horizon.fakes import PortForwardingRuleManager
-        from akanda.horizon.fakes import PortAliasManager
-        if data['public_port_alias'] != 'Custom':
-            public_port_alias = PortAliasManager.get(
-                request, data['public_port_alias'])
-            data['public_protocol'] = public_port_alias._protocol
-            data['public_port'] = public_port_alias._ports
-
-        if data['private_port_alias'] != 'Custom':
-            private_port_alias = PortAliasManager.get(
-                request, data['private_port_alias'])
-            data['private_protocol'] = private_port_alias._protocol
-            data['private_port'] = private_port_alias._ports
-
-        # data.pop('public_ip')
-        # data.pop('private_ip')
-        # PortForwardingRuleManager.create(request, data)
         return quantum_extensions_client.portforward_create(request, data)
+
+
+
+class EditPortsAction(workflows.Action):
+    public_protocol = forms.ChoiceField(label=_("Protocol"),
+                                        choices=common.NEW_PROTOCOL_CHOICES)
+    public_port = forms.IntegerField(label=_("Public Port"),
+                                     min_value=1,
+                                     max_value=65536)
+    private_protocol = forms.ChoiceField(label=_("Protocol"),
+                                         choices=common.NEW_PROTOCOL_CHOICES)
+    private_port = forms.IntegerField(label=_("Private Port"),
+                                      min_value=1,
+                                      max_value=65536)
+    port_id = forms.CharField(label=_("Id"),
+                              widget=forms.HiddenInput,
+                              required=False)
+
+    class Meta:
+        name = _("Ports")
+        permissions = ()
+
+    def clean(self):
+        cleaned_data = super(EditPortsAction, self).clean()
+        public_protocol = cleaned_data.get('public_protocol', None)
+        private_protocol = cleaned_data.get('private_protocol', None)
+        
+        if public_protocol  and private_protocol:
+            if public_protocol != private_protocol:
+                raise forms.ValidationError(
+                    "Did not send for 'help' in "
+                    "the subject despite CC'ing yourself.")
+
+        return cleaned_data
+
+
+class EditPorts(workflows.Step):
+    action_class = EditPortsAction
+    depends_on = ("rule_name", "instance")
+    contributes = ("public_protocol",
+                   "public_port",
+                   "private_protocol",
+                   "private_port",
+                   "port_id")
+    template_name = "akanda/portforwarding/_edit_form_fields.html"
 
 
 class EditPortForwardingRule(workflows.Workflow):
@@ -138,7 +227,7 @@ class EditPortForwardingRule(workflows.Workflow):
     success_message = _('Port Forwarding Rule successfully edited')
     failure_message = _('Unable to edit Port Forwarding Rule".')
     success_url = "horizon:nova:networking:index"
-    default_steps = (Details, Ports)
+    default_steps = (Details, EditPorts)
 
     def get_success_url(self):
         url = super(EditPortForwardingRule, self).get_success_url()
@@ -153,19 +242,4 @@ class EditPortForwardingRule(workflows.Workflow):
             return False
 
     def _update_portforwarding_rule(self, request, data):
-        from akanda.horizon.fakes import PortForwardingRuleManager
-        from akanda.horizon.fakes import PortAliasManager
-
-        if data['public_port_alias'] != 'Custom':
-            public_port_alias = PortAliasManager.get(
-                request, data['public_port_alias'])
-            data['public_protocol'] = public_port_alias._protocol
-            data['public_port'] = public_port_alias._ports
-
-        if data['private_port_alias'] != 'Custom':
-            private_port_alias = PortAliasManager.get(
-                request, data['private_port_alias'])
-            data['private_protocol'] = private_port_alias._protocol
-            data['private_port'] = private_port_alias._ports
-
-        PortForwardingRuleManager.update(request, data)
+        return quantum_extensions_client.portforward_update(request, data)

@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 from horizon import exceptions
 from horizon import workflows
 
+from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon.portforwarding.workflows import (
     PortForwardingRule, EditPortForwardingRule)
 
@@ -19,8 +20,7 @@ class EditPortForwardingRuleView(workflows.WorkflowView):
     def _get_object(self, ):
         if not hasattr(self, "_object"):
             try:
-                from akanda.horizon.fakes import PortForwardingRuleManager
-                self._object = PortForwardingRuleManager.get(
+                self._object = quantum_extensions_client.portforward_get(
                     self.request, self.kwargs['portforward_rule_id'])
             except:
                 msg = _('Unable to retrieve firewall rule.')
@@ -37,20 +37,13 @@ class EditPortForwardingRuleView(workflows.WorkflowView):
     def get_initial(self):
         rule = self._get_object()
         initial_data = {'id': self.kwargs['portforward_rule_id'],
-                        'rule_name': rule.rule_name,
-                        'instance': rule.instance,
-                        'public_port_alias': rule.public_port_alias,
-                        'private_port_alias': rule.private_port_alias}
+                        'rule_name': rule['name'],
+                        'instance': rule['instance_id'],
+                        'public_protocol': rule['protocol'],
+                        'public_port': rule['public_port'],
+                        'private_protocol': rule['protocol'],
+                        'private_port': rule['private_port'],
+                        'port_id': rule['port_id'],
+                        }
 
-        initial_data['public_protocol'] = ''
-        initial_data['public_port'] = ''
-        if rule.public_port_alias == 'Custom':
-            initial_data['public_protocol'] = rule.public_protocol
-            initial_data['public_port'] = rule.public_port
-
-        initial_data['private_protocol'] = ''
-        initial_data['private_port'] = ''
-        if rule.private_port_alias == 'Custom':
-            initial_data['private_protocol'] = rule.private_protocol
-            initial_data['private_port'] = rule.private_port
         return initial_data
