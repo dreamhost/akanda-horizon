@@ -30,12 +30,11 @@ class Edit(tables.LinkAction):
 
 
 class HostAliasTable(tables.DataTable):
-    alias_name = tables.Column('alias_name', verbose_name=_("Alias Name"))
-    instances = tables.Column('instances', verbose_name=_("Instances"))
+    name = tables.Column('name', verbose_name=_("Name"))
 
     class Meta:
         name = "hosts"
-        verbose_name = _("Host Aliases")
+        verbose_name = _("Address Groups")
         table_actions = (Create, Delete,)
         row_actions = (Edit,)
 

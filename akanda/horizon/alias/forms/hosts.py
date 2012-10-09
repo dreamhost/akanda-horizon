@@ -6,7 +6,6 @@ from horizon import forms
 from horizon import messages
 
 from akanda.horizon.tabs import alias_tab_redirect
-from akanda.horizon.fakes import INSTANCES_FAKE_DATA
 
 
 class BaseHostAliasForm(forms.SelfHandlingForm):
@@ -14,9 +13,7 @@ class BaseHostAliasForm(forms.SelfHandlingForm):
     """
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
-    alias_name = forms.CharField(label=_("Name"),)
-    instances = forms.MultipleChoiceField(
-        label=_("Instances"), choices=INSTANCES_FAKE_DATA)
+    name = forms.CharField(label=_("Name"), max_length=255)
 
 
 class CreateHostAliasForm(BaseHostAliasForm):

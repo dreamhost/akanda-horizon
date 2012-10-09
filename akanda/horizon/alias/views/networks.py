@@ -48,5 +48,5 @@ class EditNetworkAliasView(forms.ModalFormView):
     def get_initial(self):
         network_alias = self._get_object()
         return {'id': self.kwargs['network_alias_id'],
-                'alias_name': network_alias['name'],
+                'name': network_alias['name'],
                 'cidr': network_alias['cidr']}
