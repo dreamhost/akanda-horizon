@@ -17,16 +17,18 @@
 # @author: Murali Raju, New Dream Network, LLC (DreamHost)
 # @author: Rosario Disomma, New Dream Network, LLC (DreamHost)
 
-import json
-
-import requests
+import logging
 
 from horizon.api import nova
 from horizon.api import quantum
+from horizon.api.quantum import quantumclient
 
 from quantumclient.common.exceptions import PortNotFoundClient
 from akanda.horizon.common import (
     NEW_PROTOCOL_CHOICES_DICT, POLICY_CHOICES_DICT)
+
+
+LOG = logging.getLogger(__name__)
 
 
 def get_protocol(value):
@@ -42,6 +44,12 @@ class Port(object):
 
     def display_protocol(self):
         return get_protocol(self.protocol)
+
+
+class AdressGroup(object):
+    def __init__(self, name, id=None):
+        self.name = name
+        self.id = id
 
 
 class Network(object):
@@ -68,13 +76,15 @@ class FilterRule(object):
         return POLICY_CHOICES_DICT[self.policy]
 
     def display_source_ip(self):
-        network = networkalias_get(self.request, self.source_network_alias)
-        return network.get('cidr')
+        # network = networkalias_get(self.request, self.source_network_alias)
+        # return network.get('cidr')
+        return self.source_network_alias
 
     def display_destination_ip(self):
-        network = networkalias_get(self.request,
-                                   self.destination_network_alias)
-        return network.get('cidr')
+        # network = networkalias_get(self.request,
+        #                            self.destination_network_alias)
+        # return network.get('cidr')
+        return self.destination_network_alias
 
     def display_source_port(self):
         return "%s %s" % (get_protocol(self.protocol),
@@ -112,154 +122,117 @@ class PortForwardingRule(object):
             return '--'
 
 
-def _mk_url(path):
-    base_url = 'http://0.0.0.0:9696'
-    version = 'v2.0'
-    return '/'.join([base_url,
-                     version,
-                     path.lstrip('/'),
-                     ])
+def _mk_url(*args):
+    path =  '/'.join(args).lstrip('/')
+    if not path.startswith('/'):
+        path = '/' + path
+    return path
 
 
 def _list(request, path):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
-    r = requests.get(_mk_url(path), headers=headers)
-    return r
+    return quantumclient(request).get(_mk_url(path))
 
 
 def _get(request, path, obj_id):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
-    return requests.get(_mk_url('%s/%s' % (path, obj_id)), headers=headers)
+    return quantumclient(request).get(_mk_url(path, obj_id))
 
 
-def _create(request, path, payload):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
-    r = requests.post(_mk_url(path), headers=headers, data=json.dumps(payload))
-    return r
+def _create(request, path, body):
+    return quantumclient(request).post(_mk_url(path), body=body)
 
 
-def _put(request, path, obj_id, payload):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
-    return requests.put(_mk_url('%s/%s' % (path, obj_id)),
-                        headers=headers, data=json.dumps(payload))
+def _put(request, path, obj_id, body):
+    return quantumclient(request).put(_mk_url(path, obj_id), body=body)
 
 
 def _delete(request, path, obj_id):
-    headers = {
-        "User-Agent": "python-quantumclient",
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-Auth-Token": request.user.token.id
-    }
-    return requests.delete(_mk_url('%s/%s' % (path, obj_id)), headers=headers)
+    return quantumclient(request).delete(_mk_url(path, obj_id))
 
 
 def portalias_list(request):
     r = _list(request, 'dhportalias')
     return [Port(item['name'], item['protocol'], item['port'], item['id'])
-            for item in r.json.get('portaliases', {})]
+            for item in r.get('portaliases', {})]
 
 
 def portalias_get(request, obj_id):
     r = _get(request, 'dhportalias', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return r.json.get('portalias', {})
+    return r.get('portalias', {})
 
 
-def portalias_create(request, payload):
+def portalias_create(request, body):
     portalias = {'portalias': {
-        'name': payload['alias_name'],
-        'protocol': payload['protocol'],
-        'port': payload['port'],
+        'name': body['alias_name'],
+        'protocol': body['protocol'],
+        'port': body['port'],
     }}
-    r = _create(request, 'dhportalias', portalias)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("portalias_create(): body = %s" % body)
+    return _create(request, 'dhportalias', portalias)
 
 
-def portalias_update(request, payload):
-    obj_id = payload.pop('id', '')
+def portalias_update(request, body):
+    obj_id = body.pop('id', '')
     portalias = {'portalias': {
-        'name': payload['alias_name'],
-        'protocol': payload['protocol'],
-        'port': payload['port'],
+        'name': body['alias_name'],
+        'protocol': body['protocol'],
+        'port': body['port'],
     }}
-    r = _put(request, 'dhportalias', obj_id, portalias)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("portalias_update(): body = %s" % body)
+    return _put(request, 'dhportalias', obj_id, portalias)
 
 
 def portalias_delete(request, obj_id):
-    r = _delete(request, 'dhportalias', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    return _delete(request, 'dhportalias', obj_id)
+
+
+def addressbook_list(request):
+    r = _list(request, 'dhaddressgroup')
+    return [AdressGroup(item['name'], item['id'])
+            for item in r.get('addressgroups', {})]
 
 
 def networkalias_list(request):
-    r = _list(request, 'dhaddressbook')
+    r = _list(request, 'dhaddressentry')
     return [Network(item['name'], item['cidr'], item['id'])
-            for item in r.json.get('addressbooks', {})]
+            for item in r.get('addressentries', {})]
 
 
 def networkalias_get(request, obj_id):
-    r = _get(request, 'dhaddressbook', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return r.json.get('addressbook', {})
+    r = _get(request, 'dhaddressentry', obj_id)
+    return r.get('addressentry', {})
 
 
-def networkalias_create(request, payload):
-    networkalias = {'addressbook': {
-        'name': payload['alias_name'],
-        'cidr': payload['cidr'],
+def networkalias_create(request, body):
+    networkalias = {'addressentry': {
+        'name': body['name'],
+        'cidr': body['cidr'],
+        'group_id': body['group']
     }}
-    r = _create(request, 'dhaddressbook', networkalias)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("networkalias_create(): body = %s" % body)
+    return _create(request, 'dhaddressentry', networkalias)
 
 
-def networkalias_update(request, payload):
-    obj_id = payload.pop('id', '')
-    networkalias = {'addressbook': {
-        'name': payload['alias_name'],
-        'cidr': payload['cidr'],
+def networkalias_update(request, body):
+    obj_id = body.pop('id', '')
+    networkalias = {'addressentry': {
+        'name': body['name'],
+        'cidr': body['cidr'],
     }}
-    r = _put(request, 'dhaddressbook', obj_id, networkalias)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("networkalias_update(): body = %s" % body)
+    return _put(request, 'dhaddressentry', obj_id, networkalias)
 
 
 def networkalias_delete(request, obj_id):
-    r = _delete(request, 'dhaddressbook', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    return _delete(request, 'dhaddressentry', obj_id)
 
 
 def filterrule_list(request):
     r = _list(request, 'dhfilterrule')
-    return [FilterRule(item['source_alias'], item['source_port'],
-                       item['destination_alias'], item['destination_port'],
+    return [FilterRule(item.get('source_id', ''), item['source_port'],
+                       item.get('destination_id', ''),
+                       item['destination_port'],
                        item['protocol'], item['action'], request, item['id'])
-            for item in r.json.get('filterrules', {})]
+            for item in r.get('filterrules', {})]
 
 
 def filterrule_get(request, obj_id):
@@ -305,10 +278,10 @@ def filterrule_delete(request, obj_id):
 
 def portforward_list(request):
     r = _list(request, 'dhportforward')
-    return [PortForwardingRule(item['name'], item['instance_id'],
+    return [PortForwardingRule(item['name'], '',
                                item['public_port'], item['protocol'],
                                item['private_port'], request, item['id'])
-            for item in r.json.get('portforwards', {})]
+            for item in r.get('portforwards', {})]
 
 
 def portforward_get(request, obj_id):

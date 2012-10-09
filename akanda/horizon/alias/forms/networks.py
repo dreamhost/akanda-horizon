@@ -9,11 +9,23 @@ from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
+def get_address_groups(request):
+    groups = [(group.id, group.name) for group in
+                    quantum_extensions_client.addressbook_list(request)]
+    return groups
+
+
 class BaseNetworkAliasForm(forms.SelfHandlingForm):
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
-    alias_name = forms.CharField(label=_("Name"), max_length=255)
+    name = forms.CharField(label=_("Name"), max_length=255)
     cidr = forms.GenericIPAddressField(label=_("CIDR"), unpack_ipv4=True)
+    group = forms.ChoiceField(label=_("Adddress Group"), choices=())
+
+    def __init__(self, *args, **kwargs):
+        super(BaseNetworkAliasForm, self).__init__(*args, **kwargs)
+        group = get_address_groups(self.request)
+        self.fields['group'] = forms.ChoiceField(choices=group)
 
 
 class CreateNetworkAliasForm(BaseNetworkAliasForm):
@@ -23,7 +35,7 @@ class CreateNetworkAliasForm(BaseNetworkAliasForm):
             messages.success(
                 request,
                 _('Successfully created network alias: %s') % (
-                    data['alias_name'],))
+                    data['name'],))
             return result
         except:
             redirect = "%s?tab=%s" % (
@@ -43,7 +55,7 @@ class EditNetworkAliasForm(BaseNetworkAliasForm):
             messages.success(
                 request,
                 _('Successfully updated '
-                  'network alias: %s') % data['alias_name'])
+                  'network alias: %s') % data['name'])
             return result
         except:
             redirect = "%s?tab=%s" % (
