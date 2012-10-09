@@ -10,8 +10,9 @@ from akanda.horizon.tabs import alias_tab_redirect
 
 
 def get_address_groups(request):
-    groups = [(group.id, group.name) for group in
-                    quantum_extensions_client.addressbook_list(request)]
+    groups = [(group.id, group.name)
+              for group in quantum_extensions_client.addressgroup_list(
+                      request)]
     return groups
 
 
