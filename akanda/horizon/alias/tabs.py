@@ -18,7 +18,7 @@ class AliasTab(tabs.TableTab):
         return quantum_extensions_client.portalias_list(self.request)
 
     def get_hosts_data(self):
-        return quantum_extensions_client.addressbook_list(self.request)
+        return quantum_extensions_client.addressgroup_list(self.request)
 
     def get_networks_data(self):
         return quantum_extensions_client.networkalias_list(self.request)

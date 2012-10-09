@@ -46,7 +46,7 @@ class Port(object):
         return get_protocol(self.protocol)
 
 
-class AdressGroup(object):
+class AddressGroup(object):
     def __init__(self, name, id=None):
         self.name = name
         self.id = id
@@ -123,7 +123,7 @@ class PortForwardingRule(object):
 
 
 def _mk_url(*args):
-    path =  '/'.join(args).lstrip('/')
+    path = '/'.join(args).lstrip('/')
     if not path.startswith('/'):
         path = '/' + path
     return path
@@ -185,10 +185,36 @@ def portalias_delete(request, obj_id):
     return _delete(request, 'dhportalias', obj_id)
 
 
-def addressbook_list(request):
+def addressgroup_list(request):
     r = _list(request, 'dhaddressgroup')
-    return [AdressGroup(item['name'], item['id'])
+    return [AddressGroup(item['name'], item['id'])
             for item in r.get('addressgroups', {})]
+
+
+def addressgroup_get(request, obj_id):
+    r = _get(request, 'dhaddressgroup', obj_id)
+    return r.get('addressgroup', {})
+
+
+def addressgroup_create(request, body):
+    addressgroup = {'addressgroup': {
+        'name': body['name'],
+    }}
+    LOG.debug("addressgroup_create(): body = %s" % body)
+    return _create(request, 'dhaddressgroup', addressgroup)
+
+
+def addressgroup_update(request, body):
+    obj_id = body.pop('id', '')
+    addressgroup = {'addressgroup': {
+        'name': body['name'],
+    }}
+    LOG.debug("addressgroup_update(): body = %s" % body)
+    return _put(request, 'dhaddressgroup', obj_id, addressgroup)
+
+
+def addressgroup_delete(request, obj_id):
+    return _delete(request, 'dhaddressgroup', obj_id)
 
 
 def networkalias_list(request):

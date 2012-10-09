@@ -6,6 +6,7 @@ from horizon import forms
 
 from akanda.horizon.alias.forms import (
     CreateHostAliasForm, EditHostAliasForm)
+from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
@@ -31,8 +32,7 @@ class EditHostAliasView(forms.ModalFormView):
     def _get_object(self):
         if not hasattr(self, "_object"):
             try:
-                from akanda.horizon.fakes import HostAliasManager
-                self._object = HostAliasManager.get(
+                self._object = quantum_extensions_client.addressgroup_get(
                     self.request, self.kwargs['host_alias_id'])
             except:
                 msg = _('Unable to retrieve host alias.')
@@ -48,5 +48,4 @@ class EditHostAliasView(forms.ModalFormView):
     def get_initial(self):
         host_alias = self._get_object()
         return {'id': self.kwargs['host_alias_id'],
-                'alias_name': host_alias.alias_name,
-                'instances': host_alias.get_instances_list()}
+                'name': host_alias['name']}
