@@ -8,28 +8,33 @@ from akanda.horizon.firewall.tabs import FirewallRuleTab
 from akanda.horizon.portforwarding.tabs import PortForwardingTab
 
 
-class NatTab(tabs.Tab):
-    name = _("Nat")
-    slug = "nat"
-    template_name = "akanda/simple.html"
-
-    def get_context_data(self, request):
-        return {}
-
-
-class VPNTab(tabs.Tab):
-    name = _("VPN")
-    slug = "vpn"
-    template_name = "akanda/simple.html"
-
-    def get_context_data(self, request):
-        return {}
+# class NatTab(tabs.Tab):
+#     name = _("Nat")
+#     slug = "nat"
+#     template_name = "akanda/simple.html"
+#
+#     def get_context_data(self, request):
+#         return {}
+#
+#
+# class VPNTab(tabs.Tab):
+#     name = _("VPN")
+#     slug = "vpn"
+#     template_name = "akanda/simple.html"
+#
+#     def get_context_data(self, request):
+#         return {}
 
 
 class NetworkingTabs(tabs.TabGroup):
     slug = "networkingtabs"
-    tabs = (AliasTab, ConfigurationTab, FirewallRuleTab,
-            NatTab, PortForwardingTab, VPNTab)
+    tabs = (AliasTab,
+            ConfigurationTab,
+            FirewallRuleTab,
+            #NatTab,
+            PortForwardingTab,
+            #VPNTab,
+            )
 
 
 def alias_tab_redirect():
