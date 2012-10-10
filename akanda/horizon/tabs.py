@@ -2,18 +2,10 @@ from django.utils.translation import ugettext as _
 
 from horizon import tabs
 
-from akanda.horizon.firewall.tabs import FirewallRuleTab
 from akanda.horizon.alias.tabs import AliasTab
+from akanda.horizon.configuration.tabs import ConfigurationTab
+from akanda.horizon.firewall.tabs import FirewallRuleTab
 from akanda.horizon.portforwarding.tabs import PortForwardingTab
-
-
-class ConfigurationTab(tabs.Tab):
-    name = _("Configuration")
-    slug = "configuration"
-    template_name = "akanda/simple.html"
-
-    def get_context_data(self, request):
-        return {}
 
 
 class NatTab(tabs.Tab):
@@ -43,6 +35,12 @@ class NetworkingTabs(tabs.TabGroup):
 def alias_tab_redirect():
     tab_group_slug = NetworkingTabs.slug
     tab_slug = AliasTab.slug
+    return "%s__%s" % (tab_group_slug, tab_slug)
+
+
+def configuration_tab_redirect():
+    tab_group_slug = NetworkingTabs.slug
+    tab_slug = ConfigurationTab.slug
     return "%s__%s" % (tab_group_slug, tab_slug)
 
 
