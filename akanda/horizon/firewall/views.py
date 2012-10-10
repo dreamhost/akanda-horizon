@@ -49,10 +49,10 @@ class EditFirewallRuleView(forms.ModalFormView):
         rule = self._get_object()
         initial_data = {
             'id': self.kwargs['firewall_rule_id'],
-            'source_network_alias': rule['source_alias'],
+            'source_id': rule['source']['id'],
             'source_public_port': rule['source_port'],
             'source_protocol': rule['protocol'],
-            'destination_network_alias': rule['destination_alias'],
+            'destination_id': rule['destination']['id'],
             'destination_public_port': rule['destination_port'],
             'destination_protocol': rule['protocol'],
             'policy': rule['action'],

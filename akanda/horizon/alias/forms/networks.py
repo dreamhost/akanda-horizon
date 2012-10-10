@@ -6,14 +6,8 @@ from horizon import messages
 from horizon import exceptions
 
 from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.utils import get_address_groups
 from akanda.horizon.tabs import alias_tab_redirect
-
-
-def get_address_groups(request):
-    groups = [(group.id, group.name)
-              for group in quantum_extensions_client.addressgroup_list(
-                      request)]
-    return groups
 
 
 class BaseNetworkAliasForm(forms.SelfHandlingForm):

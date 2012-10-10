@@ -39,11 +39,11 @@ class Edit(tables.LinkAction):
 class FirewallRuleTable(tables.DataTable):
     policy = tables.Column('display_policy', verbose_name=_("Policy"))
     source_ip = tables.Column(
-        'display_source_ip', verbose_name=_("Source IP"))
+        'display_source_group', verbose_name=_("Source IP"))
     source_ports = tables.Column(
         'display_source_port', verbose_name=_("Source Port"))
     destination_ip = tables.Column(
-        'display_destination_ip', verbose_name=_("Destionation IP"))
+        'display_destination_group', verbose_name=_("Destionation IP"))
     destination_ports = tables.Column(
         'display_destination_port', verbose_name=_("Destionation Port"))
 

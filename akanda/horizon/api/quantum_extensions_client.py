@@ -60,13 +60,13 @@ class Network(object):
 
 
 class FilterRule(object):
-    def __init__(self, source_network_alias, source_public_port,
-                 destination_network_alias, destination_public_port,
+    def __init__(self, source, source_public_port,
+                 destination, destination_public_port,
                  protocol, policy, request, id=None):
         self.policy = policy
-        self.source_network_alias = source_network_alias
+        self.source = source
         self.source_public_port = source_public_port
-        self.destination_network_alias = destination_network_alias
+        self.destination = destination
         self.destination_public_port = destination_public_port
         self.protocol = protocol
         self.request = request
@@ -75,16 +75,15 @@ class FilterRule(object):
     def display_policy(self):
         return POLICY_CHOICES_DICT[self.policy]
 
-    def display_source_ip(self):
-        # network = networkalias_get(self.request, self.source_network_alias)
-        # return network.get('cidr')
-        return self.source_network_alias
+    def display_source_group(self):
+        if self.source:
+            return self.source['name']
+        return ''
 
-    def display_destination_ip(self):
-        # network = networkalias_get(self.request,
-        #                            self.destination_network_alias)
-        # return network.get('cidr')
-        return self.destination_network_alias
+    def display_destination_group(self):
+        if self.destination:
+            return self.destination['name']
+        return ''
 
     def display_source_port(self):
         return "%s %s" % (get_protocol(self.protocol),
@@ -96,13 +95,14 @@ class FilterRule(object):
 
 
 class PortForwardingRule(object):
-    def __init__(self, rule_name, instance_id, public_port,
-                 protocol, private_port, request, id=None):
+    def __init__(self, rule_name, public_port,
+                 protocol, private_port, port,
+                 request, id=None):
         self.rule_name = rule_name
-        self.instance_id = instance_id
         self.public_port = public_port
         self.protocol = protocol
         self.private_port = private_port
+        self.port = port
         self.request = request
         self.id = id
 
@@ -116,7 +116,7 @@ class PortForwardingRule(object):
 
     def display_instance(self):
         try:
-            instance = nova.server_get(self.request, self.instance_id)
+            instance = nova.server_get(self.request, self.port['device_id'])
             return instance.name
         except:
             return '--'
@@ -254,105 +254,99 @@ def networkalias_delete(request, obj_id):
 
 def filterrule_list(request):
     r = _list(request, 'dhfilterrule')
-    return [FilterRule(item.get('source_id', ''), item['source_port'],
-                       item.get('destination_id', ''),
-                       item['destination_port'],
+    return [FilterRule(item.get('source'), item['source_port'],
+                       item.get('destination'), item['destination_port'],
                        item['protocol'], item['action'], request, item['id'])
             for item in r.get('filterrules', {})]
 
 
 def filterrule_get(request, obj_id):
     r = _get(request, 'dhfilterrule', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return r.json.get('filterrule', {})
+    return r.get('filterrule', {})
 
 
-def filterrule_create(request, payload):
+def filterrule_create(request, body):
     filterrule = {'filterrule': {
-        'source_alias': payload['source_network_alias'],
-        'destination_alias': payload['destination_network_alias'],
-        'source_port': payload['source_public_port'],
-        'destination_port': payload['destination_public_port'],
-        'protocol': payload['source_protocol'],
-        'action': payload['policy'],
+        'source_id': body['source_id'],
+        'destination_id': body['destination_id'],
+        'source_port': body['source_public_port'],
+        'destination_port': body['destination_public_port'],
+        'protocol': body['source_protocol'],
+        'action': body['policy'],
     }}
-    r = _create(request, 'dhfilterrule', filterrule)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("filterrule_create(): body = %s" % body)
+    return _create(request, 'dhfilterrule', filterrule)
 
 
-def filterrule_update(request, payload):
-    obj_id = payload.pop('id', '')
+def filterrule_update(request, body):
+    obj_id = body.pop('id', '')
     filterrule = {'filterrule': {
-        'source_alias': payload['source_network_alias'],
-        'destination_alias': payload['destination_network_alias'],
-        'source_port': payload['source_public_port'],
-        'destination_port': payload['destination_public_port'],
-        'protocol': payload['source_protocol'],
-        'action': payload['policy'],
+        'source_id': body['source_id'],
+        'destination_id': body['destination_id'],
+        'source_port': body['source_public_port'],
+        'destination_port': body['destination_public_port'],
+        'protocol': body['source_protocol'],
+        'action': body['policy'],
     }}
-    r = _put(request, 'dhfilterrule', obj_id, filterrule)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("filterrule_update(): body = %s" % body)
+    return _put(request, 'dhfilterrule', obj_id, filterrule)
 
 
 def filterrule_delete(request, obj_id):
-    r = _delete(request, 'dhfilterrule', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    return _delete(request, 'dhfilterrule', obj_id)
 
 
 def portforward_list(request):
     r = _list(request, 'dhportforward')
-    return [PortForwardingRule(item['name'], '',
-                               item['public_port'], item['protocol'],
-                               item['private_port'], request, item['id'])
+    return [PortForwardingRule(item['name'], item['public_port'],
+                               item['protocol'], item['private_port'],
+                               item['port'], request, item['id'])
             for item in r.get('portforwards', {})]
 
 
 def portforward_get(request, obj_id):
     r = _get(request, 'dhportforward', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return r.json.get('portforward', {})
+    return r.get('portforward', {})
 
 
-def portforward_create(request, payload):
-    port_list = quantum.port_list(request)
+def portforward_create(request, body):
+    port_list = quantum.port_list(request, device_id=body['instance'])
     try:
         port = port_list[0]
     except IndexError:
         raise PortNotFoundClient
 
     portforward = {'portforward': {
-        'name': payload['rule_name'],
-        'instance_id': payload['instance'],
-        'protocol': payload['public_protocol'],
-        'public_port': payload['public_port'],
-        'private_port': payload['private_port'],
+        'name': body['rule_name'],
+        'protocol': body['public_protocol'],
+        'public_port': body['public_port'],
+        'private_port': body['private_port'],
         'port_id': port.id
     }}
-
-    r = _create(request, 'dhportforward', portforward)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("portforward_create(): body = %s" % body)
+    return  _create(request, 'dhportforward', portforward)
 
 
-def portforward_update(request, payload):
-    obj_id = payload.pop('id', '')
+def portforward_update(request, body):
+    obj_id = body.pop('id', '')
+
+    port_list = quantum.port_list(request, device_id=body['instance'])
+    try:
+        port = port_list[0]
+    except IndexError:
+        raise PortNotFoundClient
+
     portforward = {'portforward': {
-        'name': payload['rule_name'],
-        'instance_id': payload['instance'],
-        'protocol': payload['public_protocol'],
-        'public_port': payload['public_port'],
-        'private_port': payload['private_port'],
-        'port_id': payload['port_id']
+        'name': body['rule_name'],
+        'instance_id': body['instance'],
+        'protocol': body['public_protocol'],
+        'public_port': body['public_port'],
+        'private_port': body['private_port'],
+        'port_id': port.id
     }}
-    r = _put(request, 'dhportforward', obj_id, portforward)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    LOG.debug("portforward_update(): body = %s" % body)
+    return _put(request, 'dhportforward', obj_id, portforward)
 
 
 def portforward_delete(request, obj_id):
-    r = _delete(request, 'dhportforward', obj_id)
-    r.raise_for_status(allow_redirects=False)
-    return True
+    return _delete(request, 'dhportforward', obj_id)

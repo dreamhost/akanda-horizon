@@ -7,6 +7,7 @@ from horizon import exceptions
 
 from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon import common
+from akanda.horizon.utils import get_address_groups
 from akanda.horizon.tabs import firewall_tab_redirect
 
 
@@ -18,29 +19,24 @@ def get_port_aliases(request):
     return port_aliases
 
 
-def get_networks_aliases(request):
-    return [(network.id, network.alias_name) for network in
-            quantum_extensions_client.networkalias_list(request)]
-
-
 class BaseFirewallRuleForm(forms.SelfHandlingForm):
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
-    source_network_alias = forms.ChoiceField(
-        label=_("Network Alias"), choices=())
+    source_id = forms.ChoiceField(
+        label=_("Address Group"))
 
-    destination_network_alias = forms.ChoiceField(
+    destination_id = forms.ChoiceField(
         label=_("Network Alias"), choices=())
     policy = forms.ChoiceField(
         label=_("Policy"), choices=common.POLICY_CHOICES)
 
     def __init__(self, *args, **kwargs):
         super(BaseFirewallRuleForm, self).__init__(*args, **kwargs)
-        network_alias_choices = get_networks_aliases(self.request)
-        self.fields['source_network_alias'] = forms.ChoiceField(
-            choices=network_alias_choices)
-        self.fields['destination_network_alias'] = forms.ChoiceField(
-            choices=network_alias_choices)
+        address_groups_choices = get_address_groups(self.request)
+        self.fields['source_id'] = forms.ChoiceField(
+            label=_("Address Group"), choices=address_groups_choices)
+        self.fields['destination_id'] = forms.ChoiceField(
+            label=_("Address Group"), choices=address_groups_choices)
 
 
 class CreateFirewallRuleForm(BaseFirewallRuleForm):

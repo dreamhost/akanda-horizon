@@ -184,9 +184,6 @@ class EditPortsAction(workflows.Action):
     private_port = forms.IntegerField(label=_("Private Port"),
                                       min_value=1,
                                       max_value=65536)
-    port_id = forms.CharField(label=_("Id"),
-                              widget=forms.HiddenInput,
-                              required=False)
 
     class Meta:
         name = _("Ports")
@@ -212,8 +209,7 @@ class EditPorts(workflows.Step):
     contributes = ("public_protocol",
                    "public_port",
                    "private_protocol",
-                   "private_port",
-                   "port_id")
+                   "private_port")
     template_name = "akanda/portforwarding/_edit_form_fields.html"
 
 

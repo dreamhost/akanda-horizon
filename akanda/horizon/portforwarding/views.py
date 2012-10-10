@@ -38,12 +38,11 @@ class EditPortForwardingRuleView(workflows.WorkflowView):
         rule = self._get_object()
         initial_data = {'id': self.kwargs['portforward_rule_id'],
                         'rule_name': rule['name'],
-                        'instance': rule['instance_id'],
+                        'instance': rule['port']['device_id'],
                         'public_protocol': rule['protocol'],
                         'public_port': rule['public_port'],
                         'private_protocol': rule['protocol'],
                         'private_port': rule['private_port'],
-                        'port_id': rule['port_id'],
                         }
 
         return initial_data
