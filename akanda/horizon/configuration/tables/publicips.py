@@ -1,7 +1,5 @@
-
 import logging
 
-from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext as _
 
 from horizon import tables
@@ -23,4 +21,4 @@ class PublicIPsTable(tables.DataTable):
 
     def get_object_display(self, datum):
         LOG.debug('get_object_display')
-        return 'objdisp'  #datum.router_name
+        return 'objdisp'  # datum.router_name

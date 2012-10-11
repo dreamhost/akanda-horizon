@@ -50,7 +50,6 @@ class Details(workflows.Step):
 
 
 class PortsAction(workflows.Action):
-    # public_ip = forms.CharField(label=_("Public Ip"), required=False)
     public_port_alias = forms.ChoiceField(label=_("Port Alias"))
     public_protocol = forms.ChoiceField(label=_("Protocol"),
                                         choices=common.NEW_PROTOCOL_CHOICES,
@@ -59,8 +58,7 @@ class PortsAction(workflows.Action):
                                      required=False,
                                      min_value=1,
                                      max_value=65536)
-    
-    # private_ip = forms.CharField(label=_("Private Ip"), required=False)
+
     private_port_alias = forms.ChoiceField(label=_("Port Alias"))
     private_protocol = forms.ChoiceField(label=_("Protocol"),
                                          choices=common.NEW_PROTOCOL_CHOICES,
@@ -96,17 +94,17 @@ class PortsAction(workflows.Action):
                     del cleaned_data["public_protocol"]
                 else:
                     s_protocol = cleaned_data['public_protocol']
-                     
+
                 if cleaned_data['public_port'] is None:
                     self._errors['public_port'] = self.error_class(
                         [msg])
                     del cleaned_data["public_port"]
             else:
-                 port_alias = quantum_extensions_client.portalias_get(
-                     self.request, cleaned_data['public_port_alias'])
-                 cleaned_data['public_protocol'] = port_alias['protocol']
-                 cleaned_data['public_port'] = port_alias['port']
-                 s_protocol = port_alias['protocol']
+                port_alias = quantum_extensions_client.portalias_get(
+                    self.request, cleaned_data['public_port_alias'])
+                cleaned_data['public_protocol'] = port_alias['protocol']
+                cleaned_data['public_port'] = port_alias['port']
+                s_protocol = port_alias['protocol']
 
         if cleaned_data.get('private_port_alias', None):
             if cleaned_data['private_port_alias'] == 'Custom':
@@ -125,7 +123,7 @@ class PortsAction(workflows.Action):
                 port_alias = quantum_extensions_client.portalias_get(
                     self.request, cleaned_data['private_port_alias'])
                 cleaned_data['private_protocol'] = port_alias['protocol']
-                cleaned_data['private_port'] = port_alias['port']  
+                cleaned_data['private_port'] = port_alias['port']
                 d_protocol = port_alias['protocol']
 
         if s_protocol  and d_protocol:
@@ -175,7 +173,6 @@ class PortForwardingRule(workflows.Workflow):
         return quantum_extensions_client.portforward_create(request, data)
 
 
-
 class EditPortsAction(workflows.Action):
     public_protocol = forms.ChoiceField(label=_("Protocol"),
                                         choices=common.NEW_PROTOCOL_CHOICES)
@@ -187,9 +184,6 @@ class EditPortsAction(workflows.Action):
     private_port = forms.IntegerField(label=_("Private Port"),
                                       min_value=1,
                                       max_value=65536)
-    port_id = forms.CharField(label=_("Id"),
-                              widget=forms.HiddenInput,
-                              required=False)
 
     class Meta:
         name = _("Ports")
@@ -199,7 +193,7 @@ class EditPortsAction(workflows.Action):
         cleaned_data = super(EditPortsAction, self).clean()
         public_protocol = cleaned_data.get('public_protocol', None)
         private_protocol = cleaned_data.get('private_protocol', None)
-        
+
         if public_protocol  and private_protocol:
             if public_protocol != private_protocol:
                 raise forms.ValidationError(
@@ -215,8 +209,7 @@ class EditPorts(workflows.Step):
     contributes = ("public_protocol",
                    "public_port",
                    "private_protocol",
-                   "private_port",
-                   "port_id")
+                   "private_port")
     template_name = "akanda/portforwarding/_edit_form_fields.html"
 
 

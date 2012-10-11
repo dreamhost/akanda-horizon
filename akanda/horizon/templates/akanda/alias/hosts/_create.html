@@ -4,7 +4,7 @@
 {% block form_id %}create_host_alias_form{% endblock %}
 {% block form_action %}{% url horizon:nova:networking:alias:hosts:create %}{% endblock %}
 
-{% block modal-header %}{% trans "Create a Host Alias" %}{% endblock %}
+{% block modal-header %}{% trans "Create an Address Group" %}{% endblock %}
 {% block modal_id %}create_host_alias_modal{% endblock %}
 
 {% block modal-body %}
@@ -15,14 +15,11 @@
 </div>
 <div class="right">
     <h3>{% trans "Description" %}:</h3>
-    <p>{% trans "Host aliases are shortcuts to defining commonly used instances." %}</p>
+    <p>{% trans "Address Groups are shortcuts to referring to groups of hosts that should have the same rules." %}</p>
 </div>
 {% endblock %}
 
 {% block modal-footer %}
-  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create Alias" %}" />
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create Address Group" %}" />
   <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
-
-
-

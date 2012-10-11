@@ -6,8 +6,8 @@ from horizon import messages
 from horizon import exceptions
 
 from akanda.horizon import common
-from akanda.horizon.tabs import alias_tab_redirect
 from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.tabs import alias_tab_redirect
 
 
 class BasePortAliasForm(forms.SelfHandlingForm):

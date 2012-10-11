@@ -4,7 +4,7 @@
 {% block form_id %}host_alias_rule_form{% endblock %}
 {% block form_action %}{% url horizon:nova:networking:alias:hosts:edit host_alias.id%}{% endblock %}
 
-{% block modal-header %}{% trans "Edit a Host Alias" %}{% endblock %}
+{% block modal-header %}{% trans "Edit an Address Group" %}{% endblock %}
 {% block modal_id %}host_alias_rule_modal{% endblock %}
 
 {% block modal-body %}
@@ -15,12 +15,11 @@
 </div>
 <div class="right">
     <h3>{% trans "Description" %}:</h3>
-    <p>{% trans "Host aliases are shortcuts to defining commonly used instances." %}</p>
+    <p>{% trans "Address Groups are shortcuts to referring to groups of hosts that should have the same rules." %}</p>
 </div>
 {% endblock %}
 
 {% block modal-footer %}
-  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Update Host Alias" %}" />
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Update Address Group" %}" />
   <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
-
