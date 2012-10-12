@@ -7,32 +7,22 @@ from horizon import exceptions
 
 from akanda.horizon.api import quantum_extensions_client
 from akanda.horizon import common
-from akanda.horizon.utils import get_address_groups
+from akanda.horizon import utils
 from akanda.horizon.tabs import firewall_tab_redirect
-
-
-def get_port_aliases(request):
-    port_aliases = [(port.id, port.alias_name) for port in
-                    quantum_extensions_client.portalias_list(request)]
-    port_aliases.insert(0, ('Custom', 'Custom'))
-    port_aliases.insert(0, ('', ''))
-    return port_aliases
 
 
 class BaseFirewallRuleForm(forms.SelfHandlingForm):
     id = forms.CharField(
         label=_("Id"), widget=forms.HiddenInput, required=False)
-    source_id = forms.ChoiceField(
-        label=_("Address Group"))
-
-    destination_id = forms.ChoiceField(
-        label=_("Network Alias"), choices=())
-    policy = forms.ChoiceField(
-        label=_("Policy"), choices=common.POLICY_CHOICES)
+    source_id = forms.ChoiceField(label=_("Address Group"))
+    destination_id = forms.ChoiceField(label=_("Network Alias"))
+    policy = forms.ChoiceField(label=_("Policy"),
+                               choices=common.POLICY_CHOICES,
+                               initial='block',)
 
     def __init__(self, *args, **kwargs):
         super(BaseFirewallRuleForm, self).__init__(*args, **kwargs)
-        address_groups_choices = get_address_groups(self.request)
+        address_groups_choices = utils.get_address_groups(self.request)
         self.fields['source_id'] = forms.ChoiceField(
             label=_("Address Group"), choices=address_groups_choices)
         self.fields['destination_id'] = forms.ChoiceField(
@@ -60,11 +50,11 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
 
     def __init__(self, *args, **kwargs):
         super(CreateFirewallRuleForm, self).__init__(*args, **kwargs)
-        port_alias_choices = get_port_aliases(self.request)
+        port_alias_choices = utils.get_port_aliases(self.request)
         self.fields['source_port_alias'] = forms.ChoiceField(
-            choices=port_alias_choices)
+            label=_("Port Alias"), choices=port_alias_choices)
         self.fields['destination_port_alias'] = forms.ChoiceField(
-            choices=port_alias_choices)
+            label=_("Port Alias"), choices=port_alias_choices)
 
     def clean(self):
         cleaned_data = super(BaseFirewallRuleForm, self).clean()
@@ -115,8 +105,8 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
         if s_protocol  and d_protocol:
             if s_protocol != d_protocol:
                 raise forms.ValidationError(
-                    "Did not send for 'help' in "
-                    "the subject despite CC'ing yourself.")
+                    "The source and destination Port Aliases "
+                    "must use the same protocol.")
 
         return cleaned_data
 
@@ -156,8 +146,8 @@ class EditFirewallRuleForm(BaseFirewallRuleForm):
         if source_protocol  and destination_protocol:
             if source_protocol != destination_protocol:
                 raise forms.ValidationError(
-                    "Did not send for 'help' in "
-                    "the subject despite CC'ing yourself.")
+                    "The source and destination Port Aliases "
+                    "must use the same protocol.")
 
         return cleaned_data
 

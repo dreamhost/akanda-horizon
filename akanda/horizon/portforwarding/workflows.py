@@ -6,16 +6,9 @@ from horizon import exceptions
 from horizon.api.nova import server_list
 
 from akanda.horizon import common
+from akanda.horizon import utils
 from akanda.horizon.tabs import portforwarding_tab_redirect
 from akanda.horizon.api import quantum_extensions_client
-
-
-def get_port_aliases(request):
-    port_aliases = [(port.id, port.alias_name) for port in
-                    quantum_extensions_client.portalias_list(request)]
-    port_aliases.insert(0, ('Custom', 'Custom'))
-    port_aliases.insert(0, ('', ''))
-    return port_aliases
 
 
 def get_instances(request):
@@ -74,7 +67,7 @@ class PortsAction(workflows.Action):
 
     def __init__(self, *args, **kwargs):
         super(PortsAction, self).__init__(*args, **kwargs)
-        port_alias_choices = get_port_aliases(self.request)
+        port_alias_choices = utils.get_port_aliases(self.request)
         self.fields['public_port_alias'] = forms.ChoiceField(
             choices=port_alias_choices)
         self.fields['private_port_alias'] = forms.ChoiceField(
@@ -129,8 +122,8 @@ class PortsAction(workflows.Action):
         if s_protocol  and d_protocol:
             if s_protocol != d_protocol:
                 raise forms.ValidationError(
-                    "Did not send for 'help' in "
-                    "the subject despite CC'ing yourself.")
+                    "The source and destination Port Aliases "
+                    "must use the same protocol.")
 
         return cleaned_data
 
@@ -197,8 +190,8 @@ class EditPortsAction(workflows.Action):
         if public_protocol  and private_protocol:
             if public_protocol != private_protocol:
                 raise forms.ValidationError(
-                    "Did not send for 'help' in "
-                    "the subject despite CC'ing yourself.")
+                    "The source and destination Port Aliases "
+                    "must use the same protocol.")
 
         return cleaned_data
 

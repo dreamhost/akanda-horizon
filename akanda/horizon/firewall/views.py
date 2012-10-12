@@ -47,12 +47,17 @@ class EditFirewallRuleView(forms.ModalFormView):
 
     def get_initial(self):
         rule = self._get_object()
+        source_id = rule['source']['id'] if rule.get('source') else ''
+        destination_id = rule['destination']['id'] \
+          if rule.get('destination') else ''
         initial_data = {
             'id': self.kwargs['firewall_rule_id'],
-            'source_id': rule['source']['id'],
+            # 'source_id': rule['source']['id'],
+            'source_id': source_id,
             'source_public_port': rule['source_port'],
             'source_protocol': rule['protocol'],
-            'destination_id': rule['destination']['id'],
+            # 'destination_id': rule['destination']['id'],
+            'destination_id': destination_id,
             'destination_public_port': rule['destination_port'],
             'destination_protocol': rule['protocol'],
             'policy': rule['action'],
