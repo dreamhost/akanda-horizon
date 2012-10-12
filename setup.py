@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='Akanda Horizon Dashboard Plugin',
+    name='akanda-horizon',
     version='0.1.0',
     description='OpenStack Horizon dashboards for manipulating L3 extensions',
     author='DreamHost',
