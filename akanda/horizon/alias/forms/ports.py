@@ -18,7 +18,7 @@ class BasePortAliasForm(forms.SelfHandlingForm):
     alias_name = forms.CharField(label=_("Name"), max_length=255)
     protocol = forms.ChoiceField(label=_("Protocol"),
                                  choices=common.NEW_PROTOCOL_CHOICES)
-    port = forms.IntegerField(label=_("Port Number"), min_value=1,
+    port = forms.IntegerField(label=_("Port Number"), min_value=0,
                               max_value=65536)
 
 
