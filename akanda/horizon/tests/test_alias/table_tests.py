@@ -16,16 +16,19 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import mock
+
 from horizon import test
 
 from akanda.horizon.alias.tables import PortAliasTable
 from akanda.horizon.api.quantum_extensions_client import (Port)
 
 PORT_TEST_DATA = (
-    Port('SSH', 'tcp', 22, 1),
-    Port('IRC', 'tcp', 33, 2),
-    Port('MySQL', 'upd', 44, 3),
+    Port('SSH', 'tcp', 22, '1'),
+    Port('IRC', 'tcp', 33, '2'),
+    Port('MySQL', 'udp', 44, '3'),
 )
+
 
 class PortAliasTableTests(test.TestCase):
     def test_table_instantiation(self):
@@ -90,4 +93,48 @@ class PortAliasTableTests(test.TestCase):
                                   '<Cell: alias_name, ports__row__1>',
                                   '<Cell: protocol, ports__row__1>',
                                   '<Cell: ports, ports__row__1>',
-                                  '<Cell: actions, ports__row__1>',])
+                                  '<Cell: actions, ports__row__1>'])
+
+    def test_table_actions_verbose_name(self):
+        req = self.factory.post('/my_url/')
+        self.table = PortAliasTable(req, PORT_TEST_DATA)
+
+        table_actions = self.table.get_table_actions()
+        create_action = table_actions[0]
+        delete_action = table_actions[1]
+
+        row_actions = self.table.get_row_actions(PORT_TEST_DATA[0])
+        edit_action = row_actions[0]
+
+        # Create
+        self.assertEqual(unicode(create_action.verbose_name), 'Create Alias')
+
+        # Delete
+        self.assertEqual(unicode(delete_action.verbose_name),
+                         'Delete Port Alias')
+        self.assertEqual(unicode(delete_action.verbose_name_plural),
+                         'Delete Port Aliases')
+        self.assertEqual(unicode(delete_action.action_present), 'Delete')
+        self.assertEqual(unicode(delete_action.action_past), 'Deleted')
+
+        # Edit
+        self.assertEqual(unicode(edit_action.verbose_name), 'Edit Alias')
+
+    def test_table_actions_post(self):
+        #Delete
+        action_string = "ports__delete"
+        req = self.factory.post('/my_url/', {'action': action_string,
+                                             'object_ids': [1, 2]})
+        self.table = PortAliasTable(req, PORT_TEST_DATA)
+        table_actions = self.table.get_table_actions()
+        delete_action = table_actions[1]
+
+        with mock.patch.object(delete_action, 'delete') as mock_delete:
+            mock_delete.return_value = None
+            with mock.patch.object(
+                    delete_action, 'success_url') as mock_success:
+                mock_success.return_value = ''
+                handled = self.table.maybe_handle()
+                self.assertEqual(handled.status_code, 302)
+                self.assertEqual(list(req._messages)[0].message,
+                                 u"Deleted Port Aliases: SSH, IRC")

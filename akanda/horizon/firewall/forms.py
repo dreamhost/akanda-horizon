@@ -102,7 +102,7 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
                 cleaned_data['destination_public_port'] = port_alias['port']
                 d_protocol = port_alias['protocol']
 
-        if s_protocol  and d_protocol:
+        if s_protocol and d_protocol:
             if s_protocol != d_protocol:
                 raise forms.ValidationError(
                     "The source and destination Port Aliases "
@@ -143,7 +143,7 @@ class EditFirewallRuleForm(BaseFirewallRuleForm):
         source_protocol = cleaned_data.get('source_protocol', None)
         destination_protocol = cleaned_data.get('destination_protocol', None)
 
-        if source_protocol  and destination_protocol:
+        if source_protocol and destination_protocol:
             if source_protocol != destination_protocol:
                 raise forms.ValidationError(
                     "The source and destination Port Aliases "

@@ -324,7 +324,7 @@ def portforward_create(request, body):
         'port_id': port.id
     }}
     LOG.debug("portforward_create(): body = %s" % body)
-    return  _create(request, 'dhportforward', portforward)
+    return _create(request, 'dhportforward', portforward)
 
 
 def portforward_update(request, body):

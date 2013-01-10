@@ -1,7 +1,8 @@
-tox
-unittest2
 nose
 coverage
 mock>=0.8.0
-pep8
-pyflakes
+mox
+selenium
+django_nose
+netaddr
+http://tarballs.openstack.org/horizon/horizon-stable-folsom.tar.gz

@@ -119,7 +119,7 @@ class PortsAction(workflows.Action):
                 cleaned_data['private_port'] = port_alias['port']
                 d_protocol = port_alias['protocol']
 
-        if s_protocol  and d_protocol:
+        if s_protocol and d_protocol:
             if s_protocol != d_protocol:
                 raise forms.ValidationError(
                     "The source and destination Port Aliases "
@@ -187,7 +187,7 @@ class EditPortsAction(workflows.Action):
         public_protocol = cleaned_data.get('public_protocol', None)
         private_protocol = cleaned_data.get('private_protocol', None)
 
-        if public_protocol  and private_protocol:
+        if public_protocol and private_protocol:
             if public_protocol != private_protocol:
                 raise forms.ValidationError(
                     "The source and destination Port Aliases "
