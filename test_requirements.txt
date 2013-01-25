@@ -1,4 +1,5 @@
 nose
+openstack.nose_plugin>=0.7
 coverage
 mock>=0.8.0
 mox

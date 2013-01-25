@@ -95,6 +95,11 @@ SITE_ID = 1
 SITE_BRANDING = 'OpenStack'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['--nocapture',
+             '--nologcapture',
+             '--all-modules',
+             '--verbosity=2',
+             '--detailed-errors']
 
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
