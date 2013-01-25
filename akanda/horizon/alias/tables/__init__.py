@@ -1,3 +1,3 @@
-from akanda.horizon.alias.tables.ports import PortAliasTable
-from akanda.horizon.alias.tables.hosts import HostAliasTable
-from akanda.horizon.alias.tables.networks import NetworkAliasTable
+from akanda.horizon.alias.tables.ports import PortAliasTable  # noqa
+from akanda.horizon.alias.tables.hosts import HostAliasTable  # noqa
+from akanda.horizon.alias.tables.networks import NetworkAliasTable  # noqa
