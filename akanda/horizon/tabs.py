@@ -1,5 +1,3 @@
-from django.utils.translation import ugettext as _
-
 from horizon import tabs
 
 from akanda.horizon.alias.tabs import AliasTab

@@ -1,5 +1,4 @@
 import collections
-import logging
 
 from django.utils.translation import ugettext as _
 
