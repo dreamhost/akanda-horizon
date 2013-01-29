@@ -16,7 +16,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import mock
+from django import http
+from mock import patch, DEFAULT
 
 from horizon import test
 
@@ -170,22 +171,53 @@ class TestPortAliasTableActionVerboseName(test.TestCase):
         self.assertEqual(unicode(edit_action.verbose_name), 'Edit Alias')
 
 
+class TestPortAliasTableRendering(test.TestCase):
+
+    def setUp(self):
+        super(TestPortAliasTableRendering, self).setUp()
+        self.table = PortAliasTable(self.request, PORT_TEST_DATA)
+
+    def test_table_actions_rendering(self):
+        table_actions = self.table.render_table_actions()
+        response = http.HttpResponse(table_actions)
+        self.assertContains(response, 'id="ports__action_create"', 1)
+        self.assertContains(response, 'ajax-modal btn-create"', 1)
+        self.assertContains(response, '<button  id="ports__action_delete"', 1)
+        self.assertContains(response, 'ports__delete', 1)
+
+    def test_row_actions_rendering(self):
+        row_actions = self.table.render_row_actions(PORT_TEST_DATA[0])
+        response = http.HttpResponse(row_actions)
+        self.assertContains(response, "<a", 1)
+        self.assertContains(response, "ajax-modal", 1)
+        self.assertContains(response, 'id="ports__row_1__action_edit"', 1)
+
+    def test_whole_table_rendering(self):
+        table = self.table.render()
+        response = http.HttpResponse(table)
+        self.assertContains(response, '<table id="ports"')
+        self.assertContains(response, '<th ', 6)
+        self.assertContains(response, 'id="ports__row__1"')
+        self.assertContains(response, 'id="ports__row__2"')
+        self.assertContains(response, 'id="ports__row__3"')
+
+
 class TestTableAction(test.TestCase):
 
     def test_delete_actions_post(self):
         action_string = "ports__delete"
-        req = self.factory.post('/my_url/', {'action': action_string,
-                                             'object_ids': [1, 2]})
+        req = self.factory.post('/my_url/',
+                                {'action': action_string,
+                                 'object_ids': [1, 2]})
         self.table = PortAliasTable(req, PORT_TEST_DATA)
         table_actions = self.table.get_table_actions()
         delete_action = table_actions[1]
 
-        with mock.patch.object(delete_action, 'delete') as mock_delete:
-            mock_delete.return_value = None
-            with mock.patch.object(
-                    delete_action, 'success_url') as mock_success:
-                mock_success.return_value = ''
-                handled = self.table.maybe_handle()
-                self.assertEqual(handled.status_code, 302)
-                self.assertEqual(list(req._messages)[0].message,
-                                 u"Deleted Port Aliases: SSH, IRC")
+        with patch.multiple(delete_action, delete=DEFAULT,
+                            success_url=DEFAULT) as values:
+            values['delete'].return_value = None
+            values['mock_success.return_value'] = ''
+            handled = self.table.maybe_handle()
+            self.assertEqual(handled.status_code, 302)
+            self.assertEqual(list(req._messages)[0].message,
+                             u"Deleted Port Aliases: SSH, IRC")
