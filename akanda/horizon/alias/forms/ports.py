@@ -55,7 +55,7 @@ class EditPortAliasForm(BasePortAliasForm):
         except:
             redirect = "%s?tab=%s" % (
                 reverse("horizon:nova:networking:index"), alias_tab_redirect())
-            exceptions.handle(request, _('Unable to create port alias.'),
+            exceptions.handle(request, _('Unable to edit port alias.'),
                               redirect=redirect)
 
     def _update_port_alias(self, request, data):
