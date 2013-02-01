@@ -1,6 +1,10 @@
+from mock import patch
+
 from horizon import test
 
-from akanda.horizon.alias.forms import CreatePortAliasForm, EditPortAliasForm
+from akanda.horizon.alias.forms import (
+    CreatePortAliasForm, EditPortAliasForm,
+    CreateNetworkAliasForm, EditNetworkAliasForm)
 from akanda.horizon.tests.base.forms import AliasFormTest
 
 
@@ -31,3 +35,41 @@ class TestPortAliasForm(test.TestCase, AliasFormTest):
         self._create_or_update_alias_fail(EditPortAliasForm,
                                           '_update_port_alias',
                                           "Unable to edit port alias.")
+
+
+class TestNetworkAliasForm(test.TestCase, AliasFormTest):
+
+    def setUp(self):
+        super(TestNetworkAliasForm, self).setUp()
+        self.form_data = {'name': 'net1', 'cidr': '192.168.1.1', 'group': 1}
+        # mock this method because both the network forms use it to fill
+        # the drop-down menu for the group field in the html template
+        self.get_address_groups = patch(
+            'akanda.horizon.alias.forms.networks.get_address_groups',
+            lambda x: [(1, 'group')])
+        self.get_address_groups.start()
+
+    def tearDown(self):
+        self.get_address_groups.stop()
+
+    def test_create_network_alias(self):
+        self._create_or_update_alias(CreateNetworkAliasForm,
+                                     '_create_network_alias',
+                                     "Successfully created network alias",
+                                     'name')
+
+    def test_create_network_alias_fail(self):
+        self._create_or_update_alias_fail(CreateNetworkAliasForm,
+                                          '_create_network_alias',
+                                          "Unable to create network alias.")
+
+    def test_update_network_alias(self):
+        self._create_or_update_alias(EditNetworkAliasForm,
+                                     '_update_network_alias',
+                                     "Successfully updated network alias",
+                                     'name')
+
+    def test_update_network_alias_fail(self):
+        self._create_or_update_alias_fail(EditNetworkAliasForm,
+                                          '_update_network_alias',
+                                          "Unable to update network alias.")
