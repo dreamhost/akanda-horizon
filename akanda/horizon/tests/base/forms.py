@@ -48,6 +48,7 @@ class AliasFormTest(object):
             self.assertTrue(form.is_valid())
             self.assertFalse(form.handle(self.request, form.cleaned_data))
             redirect = "%s?tab=%s" % (
-                reverse('horizon:nova:networking:index'), alias_tab_redirect())
+                reverse('horizon:project:networking:index'),
+                alias_tab_redirect())
             handle.assert_called_once_with(
                 self.request, msg, redirect=redirect)

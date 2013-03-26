@@ -18,7 +18,7 @@
 
 from mock import patch, DEFAULT
 
-from horizon import test
+from openstack_dashboard.test import helpers
 
 from akanda.horizon.alias.tables import NetworkAliasTable
 from akanda.horizon.api.quantum_extensions_client import Network
@@ -32,7 +32,7 @@ NETWORK_TEST_DATA = (
 )
 
 
-class TestNetworkAliasTableInstantiation(test.TestCase,
+class TestNetworkAliasTableInstantiation(helpers.TestCase,
                                          table.TableInstantiationTests):
 
     def setUp(self):
@@ -50,7 +50,7 @@ class TestNetworkAliasTableInstantiation(test.TestCase,
         self._table_columns(['multi_select', 'alias_name', 'cidr', 'actions'])
 
 
-class TestNetworkAliasTableConstruction(test.TestCase,
+class TestNetworkAliasTableConstruction(helpers.TestCase,
                                         table.TableConstructionTests):
     def setUp(self):
         super(TestNetworkAliasTableConstruction, self).setUp()
@@ -67,7 +67,7 @@ class TestNetworkAliasTableConstruction(test.TestCase,
 
 
 class TestNetworkAliasTableActionsVerboseName(
-        test.TestCase, table.TableActionsVerboseNameTests):
+        helpers.TestCase, table.TableActionsVerboseNameTests):
 
     def setUp(self):
         super(TestNetworkAliasTableActionsVerboseName, self).setUp()
@@ -96,7 +96,8 @@ class TestNetworkAliasTableActionsVerboseName(
         self._check_actions_verbose_name('verbose_name', 'Edit Alias')
 
 
-class TestNetworkAliasTableRendering(test.TestCase, table.TableRenderingTests):
+class TestNetworkAliasTableRendering(
+        helpers.TestCase, table.TableRenderingTests):
 
     def setUp(self):
         super(TestNetworkAliasTableRendering, self).setUp()
@@ -104,7 +105,7 @@ class TestNetworkAliasTableRendering(test.TestCase, table.TableRenderingTests):
         self.table = NetworkAliasTable(self.request, self.data)
 
 
-class TestNetworkAliasTableAction(test.TestCase):
+class TestNetworkAliasTableAction(helpers.TestCase):
 
     def test_delete_actions_post(self):
         action_string = "networks__delete"

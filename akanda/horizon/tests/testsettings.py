@@ -53,10 +53,10 @@ INSTALLED_APPS = (
     'openstack_auth',
     'compressor',
     'horizon',
-    'horizon.tests',
-    'horizon.dashboards.nova',
-    'horizon.dashboards.syspanel',
-    'horizon.dashboards.settings',
+    'openstack_dashboard',
+    'openstack_dashboard.dashboards.project',
+    'openstack_dashboard.dashboards.admin',
+    'openstack_dashboard.dashboards.settings',
     'akanda.horizon'
 )
 
@@ -89,7 +89,7 @@ STATIC_URL = '/static/'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
-ROOT_URLCONF = 'horizon.tests.testurls'
+ROOT_URLCONF = 'openstack_dashboard.urls'
 TEMPLATE_DIRS = (os.path.join(ROOT_PATH, 'tests', 'templates'))
 SITE_ID = 1
 SITE_BRANDING = 'OpenStack'
@@ -110,8 +110,8 @@ SESSION_COOKIE_SECURE = False
 AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
 
 HORIZON_CONFIG = {
-    'dashboards': ('nova', 'syspanel', 'settings'),
-    'default_dashboard': 'nova',
+    'dashboards': ('project', 'admin', 'settings'),
+    'default_dashboard': 'project',
     "password_validator": {
         "regex": '^.{8,18}$',
         "help_text": _("Password must be between 8 and 18 characters.")

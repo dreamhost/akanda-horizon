@@ -3,13 +3,13 @@ from django.core.urlresolvers import reverse
 
 from mock import patch
 
-from horizon import test
+from openstack_dashboard.test import helpers
 
 from akanda.horizon.tabs import alias_tab_redirect
 from akanda.horizon import alias  # noqa
 
 
-class TestNetworkAliasView(test.TestCase):
+class TestNetworkAliasView(helpers.TestCase):
 
     def setUp(self):
         super(TestNetworkAliasView, self).setUp()
