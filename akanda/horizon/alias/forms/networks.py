@@ -41,7 +41,7 @@ class CreateNetworkAliasForm(BaseNetworkAliasForm):
             return result
         except:
             redirect = "%s?tab=%s" % (
-                reverse("horizon:nova:networking:index"),
+                reverse("horizon:project:networking:index"),
                 alias_tab_redirect())
             exceptions.handle(request, _('Unable to create network alias.'),
                               redirect=redirect)
@@ -61,7 +61,8 @@ class EditNetworkAliasForm(BaseNetworkAliasForm):
             return result
         except:
             redirect = "%s?tab=%s" % (
-                reverse("horizon:nova:networking:index"), alias_tab_redirect())
+                reverse("horizon:project:networking:index"),
+                alias_tab_redirect())
             exceptions.handle(request, _('Unable to update network alias.'),
                               redirect=redirect)
 
