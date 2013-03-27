@@ -148,7 +148,7 @@ class PortForwardingRule(workflows.Workflow):
     finalize_button_name = _("Create Rule")
     success_message = _('Port Forwarding Rule successfully created')
     failure_message = _('Unable to create Port Forwarding Rule".')
-    success_url = "horizon:nova:networking:index"
+    success_url = "horizon:project:networking:index"
     default_steps = (Details, Ports)
 
     def get_success_url(self):
@@ -212,7 +212,7 @@ class EditPortForwardingRule(workflows.Workflow):
     finalize_button_name = _("Edit Rule")
     success_message = _('Port Forwarding Rule successfully edited')
     failure_message = _('Unable to edit Port Forwarding Rule".')
-    success_url = "horizon:nova:networking:index"
+    success_url = "horizon:project:networking:index"
     default_steps = (Details, EditPorts)
 
     def get_success_url(self):
