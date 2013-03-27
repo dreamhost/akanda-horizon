@@ -13,7 +13,7 @@ from akanda.horizon.tabs import alias_tab_redirect
 class CreateHostAliasView(forms.ModalFormView):
     form_class = CreateHostAliasForm
     template_name = 'akanda/alias/hosts/create.html'
-    success_url = reverse_lazy('horizon:nova:networking:index')
+    success_url = reverse_lazy('horizon:project:networking:index')
 
     def get_success_url(self):
         url = super(CreateHostAliasView, self).get_success_url()
@@ -23,7 +23,7 @@ class CreateHostAliasView(forms.ModalFormView):
 class EditHostAliasView(forms.ModalFormView):
     form_class = EditHostAliasForm
     template_name = 'akanda/alias/hosts/edit_rules.html'
-    success_url = reverse_lazy('horizon:nova:networking:index')
+    success_url = reverse_lazy('horizon:project:networking:index')
 
     def get_success_url(self):
         url = super(EditHostAliasView, self).get_success_url()

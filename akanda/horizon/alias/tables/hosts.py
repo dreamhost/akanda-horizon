@@ -9,7 +9,7 @@ class Delete(tables.DeleteAction):
     name = 'delete'
     data_type_singular = _("Address Group")
     data_type_plural = _("Address Groups")
-    success_url = reverse_lazy('horizon:nova:networking:index')
+    success_url = reverse_lazy('horizon:project:networking:index')
 
     def delete(self, request, obj_id):
         quantum_extensions_client.addressgroup_delete(request, obj_id)
@@ -18,14 +18,14 @@ class Delete(tables.DeleteAction):
 class Create(tables.LinkAction):
     name = "create"
     verbose_name = _("Create Address Group")
-    url = "horizon:nova:networking:alias:hosts:create"
+    url = "horizon:project:networking:alias:hosts:create"
     classes = ("ajax-modal", "btn-create")
 
 
 class Edit(tables.LinkAction):
     name = "edit_host"
     verbose_name = _("Edit Address Group")
-    url = "horizon:nova:networking:alias:hosts:edit"
+    url = "horizon:project:networking:alias:hosts:edit"
     classes = ("ajax-modal", "btn-edit")
 
 

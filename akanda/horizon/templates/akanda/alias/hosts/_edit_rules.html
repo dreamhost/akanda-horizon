@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block form_id %}host_alias_rule_form{% endblock %}
-{% block form_action %}{% url horizon:nova:networking:alias:hosts:edit host_alias.id%}{% endblock %}
+{% block form_action %}{% url horizon:project:networking:alias:hosts:edit host_alias.id%}{% endblock %}
 
 {% block modal-header %}{% trans "Edit an Address Group" %}{% endblock %}
 {% block modal_id %}host_alias_rule_modal{% endblock %}
