@@ -117,7 +117,7 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
             return result
         except:
             redirect = "%s?tab=%s" % (
-                reverse("horizon:nova:networking:index"),
+                reverse("horizon:project:networking:index"),
                 firewall_tab_redirect())
             exceptions.handle(request, _('Unable to create firewall rule.'),
                               redirect=redirect)
@@ -158,7 +158,7 @@ class EditFirewallRuleForm(BaseFirewallRuleForm):
             return result
         except:
             redirect = "%s?tab=%s" % (
-                reverse("horizon:nova:networking:index"),
+                reverse("horizon:project:networking:index"),
                 firewall_tab_redirect())
             exceptions.handle(request, _('Unable to edit firewall rule.'),
                               redirect=redirect)

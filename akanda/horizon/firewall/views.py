@@ -13,7 +13,7 @@ from akanda.horizon.firewall.forms import (
 class CreateFirewallRuleView(forms.ModalFormView):
     form_class = CreateFirewallRuleForm
     template_name = 'akanda/firewall/create.html'
-    success_url = reverse_lazy('horizon:nova:networking:index')
+    success_url = reverse_lazy('horizon:project:networking:index')
 
     def get_success_url(self):
         url = super(CreateFirewallRuleView, self).get_success_url()
@@ -23,7 +23,7 @@ class CreateFirewallRuleView(forms.ModalFormView):
 class EditFirewallRuleView(forms.ModalFormView):
     form_class = EditFirewallRuleForm
     template_name = 'akanda/firewall/edit.html'
-    success_url = reverse_lazy('horizon:nova:networking:index')
+    success_url = reverse_lazy('horizon:project:networking:index')
 
     def get_success_url(self):
         url = super(EditFirewallRuleView, self).get_success_url()

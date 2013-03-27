@@ -10,7 +10,7 @@ class Delete(tables.DeleteAction):
     name = 'delete'
     data_type_singular = _("Firewall Rule")
     data_type_plural = _("Firewall Rules")
-    success_url = reverse_lazy('horizon:nova:networking:index')
+    success_url = reverse_lazy('horizon:project:networking:index')
 
     def get_success_url(self, request=None):
         # import here to avoid circular import
@@ -25,14 +25,14 @@ class Delete(tables.DeleteAction):
 class Create(tables.LinkAction):
     name = "create"
     verbose_name = _("Create Rule")
-    url = "horizon:nova:networking:firewall:create"
+    url = "horizon:project:networking:firewall:create"
     classes = ("ajax-modal", "btn-create")
 
 
 class Edit(tables.LinkAction):
     name = "edit_rule"
     verbose_name = _("Edit Rule")
-    url = "horizon:nova:networking:firewall:edit"
+    url = "horizon:project:networking:firewall:edit"
     classes = ("ajax-modal", "btn-edit")
 
 
