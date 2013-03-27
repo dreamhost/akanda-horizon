@@ -18,7 +18,7 @@
 
 from mock import patch, DEFAULT
 
-from horizon import test
+from openstack_dashboard.test import helpers
 
 from akanda.horizon.alias.tables import PortAliasTable
 from akanda.horizon.api.quantum_extensions_client import Port
@@ -31,7 +31,7 @@ PORT_TEST_DATA = (
 )
 
 
-class TestPortAliasTableInstantiation(test.TestCase,
+class TestPortAliasTableInstantiation(helpers.TestCase,
                                       table.TableInstantiationTests):
 
     def setUp(self):
@@ -50,7 +50,7 @@ class TestPortAliasTableInstantiation(test.TestCase,
                              'protocol', 'ports', 'actions'])
 
 
-class TestPortAliasTableConstruction(test.TestCase,
+class TestPortAliasTableConstruction(helpers.TestCase,
                                      table.TableConstructionTests):
     def setUp(self):
         super(TestPortAliasTableConstruction, self).setUp()
@@ -67,7 +67,7 @@ class TestPortAliasTableConstruction(test.TestCase,
 
 
 class TestPortAliasTableActionsVerboseName(
-        test.TestCase, table.TableActionsVerboseNameTests):
+        helpers.TestCase, table.TableActionsVerboseNameTests):
 
     def setUp(self):
         super(TestPortAliasTableActionsVerboseName, self).setUp()
@@ -96,7 +96,7 @@ class TestPortAliasTableActionsVerboseName(
         self._check_actions_verbose_name('verbose_name', 'Edit Alias')
 
 
-class TestPortAliasTableRendering(test.TestCase, table.TableRenderingTests):
+class TestPortAliasTableRendering(helpers.TestCase, table.TableRenderingTests):
 
     def setUp(self):
         super(TestPortAliasTableRendering, self).setUp()
@@ -104,7 +104,7 @@ class TestPortAliasTableRendering(test.TestCase, table.TableRenderingTests):
         self.table = PortAliasTable(self.request, self.data)
 
 
-class TestPortAliasTableAction(test.TestCase):
+class TestPortAliasTableAction(helpers.TestCase):
 
     def test_delete_actions_post(self):
         action_string = "ports__delete"

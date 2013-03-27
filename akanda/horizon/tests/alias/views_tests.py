@@ -3,13 +3,13 @@ from django.core.urlresolvers import reverse
 
 from mock import patch
 
-from horizon import test
+from openstack_dashboard.test import helpers
 
 from akanda.horizon.tabs import alias_tab_redirect
 from akanda.horizon import alias  # noqa
 
 
-class TestNetworkAliasView(test.TestCase):
+class TestNetworkAliasView(helpers.TestCase):
 
     def setUp(self):
         super(TestNetworkAliasView, self).setUp()
@@ -29,24 +29,24 @@ class TestNetworkAliasView(test.TestCase):
         self.quantum_extensions_client.stop()
 
     def test_create_network_alias(self):
-        url = reverse('horizon:nova:networking:alias:networks:create')
+        url = reverse('horizon:project:networking:alias:networks:create')
         response = self.client.post(url, self.form_data)
         self.assertNoFormErrors(response)
 
     def test_create_network_alias_redirect(self):
-        url = reverse('horizon:nova:networking:alias:networks:create')
+        url = reverse('horizon:project:networking:alias:networks:create')
         response = self.client.post(url, self.form_data)
-        redirect_url = "%s?tab=%s" % (reverse('horizon:nova:networking:index'),
-                                      alias_tab_redirect())
+        redirect_url = "%s?tab=%s" % (
+            reverse('horizon:project:networking:index'), alias_tab_redirect())
         self.assertRedirectsNoFollow(response, redirect_url)
 
     def test_create_network_alias_assert_template(self):
-        url = reverse('horizon:nova:networking:alias:networks:create')
+        url = reverse('horizon:project:networking:alias:networks:create')
         response = self.client.post(url)
         self.assertTemplateUsed(response, 'akanda/alias/networks/create.html')
 
     def test_create_network_alias_message(self):
-        url = reverse('horizon:nova:networking:alias:networks:create')
+        url = reverse('horizon:project:networking:alias:networks:create')
         response = self.client.post(url, self.form_data)
         storage = default_storage(response.request)
         message_cookie = response.cookies['messages'].value
@@ -58,7 +58,7 @@ class TestNetworkAliasView(test.TestCase):
     @patch('alias.views.networks.quantum_extensions_client.networkalias_get')
     def test_update_network_alias(self, get_obj):
         url = reverse(
-            'horizon:nova:networking:alias:networks:edit', args=['1'])
+            'horizon:project:networking:alias:networks:edit', args=['1'])
         network_ref = {'name': 'net1', 'cidr': '192.168.1.1',
                        'groups': 1, 'id': 1}
         get_obj.return_value = network_ref
@@ -69,7 +69,7 @@ class TestNetworkAliasView(test.TestCase):
     @patch('alias.views.networks.quantum_extensions_client.networkalias_get')
     def test_update_network_alias_assert_template(self, get_obj):
         url = reverse(
-            'horizon:nova:networking:alias:networks:edit', args=['1'])
+            'horizon:project:networking:alias:networks:edit', args=['1'])
         network_ref = {'name': 'net1', 'cidr': '192.168.1.1',
                        'groups': 1, 'id': 1}
         get_obj.return_value = network_ref

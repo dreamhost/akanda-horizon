@@ -2,7 +2,7 @@ import collections
 
 from django.utils.translation import ugettext as _
 
-from horizon.api import quantum
+from openstack_dashboard.api import quantum
 from horizon import tabs
 
 from akanda.horizon.configuration.tables.publicips import PublicIPsTable

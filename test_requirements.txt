@@ -1,3 +1,4 @@
+git+https://github.com/openstack/horizon.git#egg=horizon
 nose
 openstack.nose_plugin>=0.7
 coverage
@@ -6,4 +7,3 @@ mox
 selenium
 django_nose
 netaddr
-http://tarballs.openstack.org/horizon/horizon-stable-folsom.tar.gz

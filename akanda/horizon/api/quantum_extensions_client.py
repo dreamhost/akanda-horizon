@@ -19,9 +19,9 @@
 
 import logging
 
-from horizon.api import nova
-from horizon.api import quantum
-from horizon.api.quantum import quantumclient
+from openstack_dashboard.api import nova
+from openstack_dashboard.api import quantum
+from openstack_dashboard.api.quantum import quantumclient
 
 from quantumclient.common.exceptions import PortNotFoundClient
 from akanda.horizon.common import (

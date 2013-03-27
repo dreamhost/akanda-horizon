@@ -1,6 +1,6 @@
 from mock import patch
 
-from horizon import test
+from openstack_dashboard.test import helpers
 
 from akanda.horizon.alias.forms import (
     CreatePortAliasForm, EditPortAliasForm,
@@ -8,7 +8,7 @@ from akanda.horizon.alias.forms import (
 from akanda.horizon.tests.base.forms import AliasFormTest
 
 
-class TestPortAliasForm(test.TestCase, AliasFormTest):
+class TestPortAliasForm(helpers.TestCase, AliasFormTest):
 
     def setUp(self):
         super(TestPortAliasForm, self).setUp()
@@ -37,7 +37,7 @@ class TestPortAliasForm(test.TestCase, AliasFormTest):
                                           "Unable to edit port alias.")
 
 
-class TestNetworkAliasForm(test.TestCase, AliasFormTest):
+class TestNetworkAliasForm(helpers.TestCase, AliasFormTest):
 
     def setUp(self):
         super(TestNetworkAliasForm, self).setUp()

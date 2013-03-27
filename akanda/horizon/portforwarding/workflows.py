@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from horizon import workflows
 from horizon import forms
 from horizon import exceptions
-from horizon.api.nova import server_list
+from openstack_dashboard.api.nova import server_list
 
 from akanda.horizon import common
 from akanda.horizon import utils
