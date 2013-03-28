@@ -12,5 +12,5 @@ install:
   - pip install flake8 --use-mirrors
   - pip install -q . --use-mirrors
 before_script:
-  - flake8 --repeat --show-source --ignore=E125 --statistics akanda
+  - flake8 --show-source --ignore=E125 --statistics akanda
 script: python akanda/horizon/manage.py test tests
