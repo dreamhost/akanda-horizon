@@ -141,7 +141,7 @@ class TableRenderingTests(object):
             response, 'id="%s__action_create"' % self.table.name, 1)
         self.assertContains(response, 'ajax-modal btn-create"', 1)
         self.assertContains(
-            response, '<button  id="%s__action_delete"' % self.table.name, 1)
+            response, 'id="%s__action_delete"' % self.table.name, 1)
         self.assertContains(response, '%s__delete' % self.table.name, 1)
 
     def test_row_actions_rendering(self):
