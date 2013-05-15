@@ -26,12 +26,12 @@ class ConfigurationTab(tabs.TableTab):
 
     def get_publicips_data(self):
         data = []
-        c = quantum.quantumclient(self.request)
-        for router in c.list_routers(
-                tenant_id=self.request.user.tenant_id).values()[0]:
-            for port in router.get('ports', []):
+        for router in quantum.router_list(
+                self.request, tenant_id=self.request.user.tenant_id):
+            router_info = quantum.router_get(self.request, router.id)
+            for port in router_info.get('ports', []):
                 if port.get('device_owner') != 'network:router_gateway':
                     continue
                 ips = [i['ip_address'] for i in port.get('fixed_ips', [])]
-                data.append(PublicIP(None, router.get('name'), ', '.join(ips)))
+                data.append(PublicIP(None, router.get('name'), ips))
         return data

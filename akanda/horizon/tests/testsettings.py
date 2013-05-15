@@ -23,6 +23,8 @@ import socket
 
 from django.utils.translation import ugettext_lazy as _
 
+from horizon.utils.secret_key import generate_or_read_from_file
+
 from openstack_dashboard.exceptions import UNAUTHORIZED, RECOVERABLE, NOT_FOUND
 
 socket.setdefaulttimeout(1)
@@ -32,6 +34,10 @@ LOGOUT_URL = '/auth/logout/'
 LOGIN_REDIRECT_URL = '/'
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+SECRET_KEY = generate_or_read_from_file(os.path.join(ROOT_PATH,
+                                                     '.secret_key_store'))
+
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 TESTSERVER = 'http://testserver'
