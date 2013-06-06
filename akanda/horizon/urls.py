@@ -5,7 +5,7 @@ from .views import IndexView
 from akanda.horizon.alias import urls as alias_urls
 from akanda.horizon.firewall import urls as firewall_urls
 from akanda.horizon.portforwarding import urls as forwarding_rules
-
+from akanda.horizon.network_topology import urls as topology_urls
 
 urlpatterns = patterns(
     '',
@@ -13,4 +13,5 @@ urlpatterns = patterns(
     url(r'alias/', include(alias_urls, namespace='alias'),),
     url(r'firewall/', include(firewall_urls, namespace='firewall'),),
     url(r'forwarding/', include(forwarding_rules, namespace='forwarding'),),
+    url(r'topology/', include(topology_urls, namespace='topology'),),
 )
