@@ -11,7 +11,10 @@ def get_interfaces_data(self):
                                       router_id=router_id)
     except Exception:
         ports = []
-        msg = _('Port list can not be retrieved.')
+        msg = _(
+            'Port list can not be retrieved for router ID %s' %
+            self.kwargs.get('router_id')
+        )
         exceptions.handle(self.request, msg)
     for p in ports:
         p.set_id_as_name_if_empty()
