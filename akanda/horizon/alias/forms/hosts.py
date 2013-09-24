@@ -5,7 +5,7 @@ from horizon import exceptions
 from horizon import forms
 from horizon import messages
 
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
@@ -35,7 +35,7 @@ class CreateHostAliasForm(BaseHostAliasForm):
                               redirect=redirect)
 
     def _create_host_alias(self, request, data):
-        return quantum_extensions_client.addressgroup_create(request, data)
+        return neutron_extensions_client.addressgroup_create(request, data)
 
 
 class EditHostAliasForm(BaseHostAliasForm):
@@ -56,4 +56,4 @@ class EditHostAliasForm(BaseHostAliasForm):
                               redirect=redirect)
 
     def _update_host_alias(self, request, data):
-        return quantum_extensions_client.addressgroup_update(request, data)
+        return neutron_extensions_client.addressgroup_update(request, data)

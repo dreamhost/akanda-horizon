@@ -6,7 +6,7 @@ from horizon import forms
 
 from akanda.horizon.alias.forms import (
     CreatePortAliasForm, EditPortAliasForm)
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
@@ -32,7 +32,7 @@ class EditPortAliasView(forms.ModalFormView):
     def _get_object(self):
         if not hasattr(self, "_object"):
             try:
-                self._object = quantum_extensions_client.portalias_get(
+                self._object = neutron_extensions_client.portalias_get(
                     self.request, self.kwargs['port_alias_id'])
             except:
                 msg = _('Unable to retrieve port alias.')

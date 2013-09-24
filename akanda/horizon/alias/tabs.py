@@ -2,7 +2,7 @@ from django.utils.translation import ugettext as _
 
 from horizon import tabs
 
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon.alias.tables import (
     PortAliasTable, HostAliasTable, NetworkAliasTable)
 
@@ -15,10 +15,10 @@ class AliasTab(tabs.TableTab):
     # preload = False
 
     def get_ports_data(self):
-        return quantum_extensions_client.portalias_list(self.request)
+        return neutron_extensions_client.portalias_list(self.request)
 
     def get_hosts_data(self):
-        return quantum_extensions_client.addressgroup_list(self.request)
+        return neutron_extensions_client.addressgroup_list(self.request)
 
     def get_networks_data(self):
-        return quantum_extensions_client.networkalias_list(self.request)
+        return neutron_extensions_client.networkalias_list(self.request)

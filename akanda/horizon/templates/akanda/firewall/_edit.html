@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block form_id %}edit_firewall_rule_form{% endblock %}
-{% block form_action %}{% url horizon:project:networking:firewall:edit firewall_rule.id %}{% endblock %}
+{% block form_action %}{% url 'horizon:project:networking:firewall:edit firewall_rule.id' %}{% endblock %}
 
 {% block modal-header %}{% trans "Edit a Rule" %}{% endblock %}
 {% block modal_id %}edit_firewall_rule_modal{% endblock %}
@@ -15,5 +15,3 @@
   <input class="btn btn-primary pull-right" type="submit" value="{% trans "Edit Rule" %}" />
   <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
-
-

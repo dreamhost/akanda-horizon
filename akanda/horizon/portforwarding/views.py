@@ -3,24 +3,22 @@ from django.utils.translation import ugettext as _
 from horizon import exceptions
 from horizon import workflows
 
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon.portforwarding.workflows import (
     PortForwardingRule, EditPortForwardingRule)
 
 
 class CreatePortForwardingRuleView(workflows.WorkflowView):
     workflow_class = PortForwardingRule
-    template_name = "nova/instances/launch.html"
 
 
 class EditPortForwardingRuleView(workflows.WorkflowView):
     workflow_class = EditPortForwardingRule
-    template_name = "nova/instances/launch.html"
 
     def _get_object(self, ):
         if not hasattr(self, "_object"):
             try:
-                self._object = quantum_extensions_client.portforward_get(
+                self._object = neutron_extensions_client.portforward_get(
                     self.request, self.kwargs['portforward_rule_id'])
             except:
                 msg = _('Unable to retrieve firewall rule.')

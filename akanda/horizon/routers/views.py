@@ -7,7 +7,7 @@ from openstack_dashboard import api
 def get_interfaces_data(self):
     try:
         router_id = self.kwargs['router_id']
-        ports = api.quantum.port_list(self.request,
+        ports = api.neutron.port_list(self.request,
                                       router_id=router_id)
     except Exception:
         ports = []

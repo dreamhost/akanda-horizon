@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block form_id %}create_host_alias_form{% endblock %}
-{% block form_action %}{% url horizon:project:networking:alias:hosts:create %}{% endblock %}
+{% block form_action %}{% url 'horizon:project:networking:alias:hosts:create' %}{% endblock %}
 
 {% block modal-header %}{% trans "Create an Address Group" %}{% endblock %}
 {% block modal_id %}create_host_alias_modal{% endblock %}

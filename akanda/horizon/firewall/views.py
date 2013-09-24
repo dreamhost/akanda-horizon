@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from horizon import exceptions
 from horizon import forms
 
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon.tabs import firewall_tab_redirect
 from akanda.horizon.firewall.forms import (
     CreateFirewallRuleForm, EditFirewallRuleForm)
@@ -32,7 +32,7 @@ class EditFirewallRuleView(forms.ModalFormView):
     def _get_object(self, ):
         if not hasattr(self, "_object"):
             try:
-                self._object = quantum_extensions_client.filterrule_get(
+                self._object = neutron_extensions_client.filterrule_get(
                     self.request, self.kwargs['firewall_rule_id'])
             except:
                 msg = _('Unable to retrieve firewall rule.')

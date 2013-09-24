@@ -13,17 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# DreamHost Quantum Extensions
+# DreamHost Neutron Extensions
 # @author: Murali Raju, New Dream Network, LLC (DreamHost)
 # @author: Rosario Disomma, New Dream Network, LLC (DreamHost)
 
 import logging
 
 from openstack_dashboard.api import nova
-from openstack_dashboard.api import quantum
-from openstack_dashboard.api.quantum import quantumclient
+from openstack_dashboard.api import neutron
+from openstack_dashboard.api.neutron import neutronclient
 
-from quantumclient.common.exceptions import PortNotFoundClient
+from neutronclient.common.exceptions import PortNotFoundClient
 from akanda.horizon.common import (
     NEW_PROTOCOL_CHOICES_DICT, POLICY_CHOICES_DICT)
 
@@ -130,23 +130,23 @@ def _mk_url(*args):
 
 
 def _list(request, path):
-    return quantumclient(request).get(_mk_url(path))
+    return neutronclient(request).get(_mk_url(path))
 
 
 def _get(request, path, obj_id):
-    return quantumclient(request).get(_mk_url(path, obj_id))
+    return neutronclient(request).get(_mk_url(path, obj_id))
 
 
 def _create(request, path, body):
-    return quantumclient(request).post(_mk_url(path), body=body)
+    return neutronclient(request).post(_mk_url(path), body=body)
 
 
 def _put(request, path, obj_id, body):
-    return quantumclient(request).put(_mk_url(path, obj_id), body=body)
+    return neutronclient(request).put(_mk_url(path, obj_id), body=body)
 
 
 def _delete(request, path, obj_id):
-    return quantumclient(request).delete(_mk_url(path, obj_id))
+    return neutronclient(request).delete(_mk_url(path, obj_id))
 
 
 def portalias_list(request):
@@ -310,7 +310,7 @@ def portforward_get(request, obj_id):
 
 
 def portforward_create(request, body):
-    port_list = quantum.port_list(request, device_id=body['instance'])
+    port_list = neutron.port_list(request, device_id=body['instance'])
     try:
         port = port_list[0]
     except IndexError:
@@ -330,7 +330,7 @@ def portforward_create(request, body):
 def portforward_update(request, body):
     obj_id = body.pop('id', '')
 
-    port_list = quantum.port_list(request, device_id=body['instance'])
+    port_list = neutron.port_list(request, device_id=body['instance'])
     try:
         port = port_list[0]
     except IndexError:

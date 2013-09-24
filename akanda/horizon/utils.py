@@ -1,10 +1,10 @@
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 
 
 def get_address_groups(request):
     head = None
     group_list = []
-    for group in quantum_extensions_client.addressgroup_list(request):
+    for group in neutron_extensions_client.addressgroup_list(request):
         if group.name == 'Any':
             head = (group.id, group.name)
         else:
@@ -19,7 +19,7 @@ def get_port_aliases(request):
     any_tcp = None
     any_udp = None
     port_aliases = []
-    for port in quantum_extensions_client.portalias_list(request):
+    for port in neutron_extensions_client.portalias_list(request):
         if port.alias_name == 'Any TCP':
             any_tcp = (port.id, port.alias_name)
         elif port.alias_name == 'Any UDP':
