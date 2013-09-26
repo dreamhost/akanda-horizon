@@ -8,11 +8,11 @@ from openstack_dashboard.api.nova import server_list
 from akanda.horizon import common
 from akanda.horizon import utils
 from akanda.horizon.tabs import portforwarding_tab_redirect
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 
 
 def get_instances(request):
-    return [(item.id, item.name) for item in server_list(request)]
+    return [(item.id, item.name) for item in server_list(request)[0]]
 
 
 class DetailsAction(workflows.Action):
@@ -93,7 +93,7 @@ class PortsAction(workflows.Action):
                         [msg])
                     del cleaned_data["public_port"]
             else:
-                port_alias = quantum_extensions_client.portalias_get(
+                port_alias = neutron_extensions_client.portalias_get(
                     self.request, cleaned_data['public_port_alias'])
                 cleaned_data['public_protocol'] = port_alias['protocol']
                 cleaned_data['public_port'] = port_alias['port']
@@ -113,7 +113,7 @@ class PortsAction(workflows.Action):
                         [msg])
                     del cleaned_data["private_port"]
             else:
-                port_alias = quantum_extensions_client.portalias_get(
+                port_alias = neutron_extensions_client.portalias_get(
                     self.request, cleaned_data['private_port_alias'])
                 cleaned_data['private_protocol'] = port_alias['protocol']
                 cleaned_data['private_port'] = port_alias['port']
@@ -163,7 +163,7 @@ class PortForwardingRule(workflows.Workflow):
             return False
 
     def _create_portforwarding_rule(self, request, data):
-        return quantum_extensions_client.portforward_create(request, data)
+        return neutron_extensions_client.portforward_create(request, data)
 
 
 class EditPortsAction(workflows.Action):
@@ -228,4 +228,4 @@ class EditPortForwardingRule(workflows.Workflow):
             return False
 
     def _update_portforwarding_rule(self, request, data):
-        return quantum_extensions_client.portforward_update(request, data)
+        return neutron_extensions_client.portforward_update(request, data)

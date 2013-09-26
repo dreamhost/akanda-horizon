@@ -2,7 +2,7 @@ import collections
 
 from django.utils.translation import ugettext as _
 
-from openstack_dashboard.api import quantum
+from openstack_dashboard.api import neutron
 from horizon import tabs
 
 from akanda.horizon.configuration.tables.publicips import PublicIPsTable
@@ -26,9 +26,9 @@ class ConfigurationTab(tabs.TableTab):
 
     def get_publicips_data(self):
         data = []
-        for router in quantum.router_list(
+        for router in neutron.router_list(
                 self.request, tenant_id=self.request.user.tenant_id):
-            router_info = quantum.router_get(self.request, router.id)
+            router_info = neutron.router_get(self.request, router.id)
             for port in router_info.get('ports', []):
                 if port.get('device_owner') != 'network:router_gateway':
                     continue

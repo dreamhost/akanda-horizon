@@ -190,7 +190,7 @@ LOGGING = {
             'handlers': ['test'],
             'propagate': False,
         },
-        'quantum': {
+        'neutron': {
             'handlers': ['test'],
             'propagate': False,
         },

@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext as _
 
 from horizon import tables
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 
 
 class Delete(tables.DeleteAction):
@@ -12,7 +12,7 @@ class Delete(tables.DeleteAction):
     success_url = reverse_lazy('horizon:project:networking:index')
 
     def delete(self, request, obj_id):
-        quantum_extensions_client.addressgroup_delete(request, obj_id)
+        neutron_extensions_client.addressgroup_delete(request, obj_id)
 
 
 class Create(tables.LinkAction):

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block form_id %}network_alias_rule_form{% endblock %}
-{% block form_action %}{% url horizon:project:networking:alias:networks:edit network_alias.id%}{% endblock %}
+{% block form_action %}{% url 'horizon:project:networking:alias:networks:edit' network_alias.id%}{% endblock %}
 
 {% block modal-header %}{% trans "Edit a Network Alias" %}{% endblock %}
 {% block modal_id %}network_alias_rule_modal{% endblock %}

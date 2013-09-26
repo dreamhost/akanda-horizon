@@ -5,7 +5,7 @@ from horizon import forms
 from horizon import messages
 from horizon import exceptions
 
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon import common
 from akanda.horizon import utils
 from akanda.horizon.tabs import firewall_tab_redirect
@@ -76,7 +76,7 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
                         [msg])
                     del cleaned_data["source_public_port"]
             else:
-                port_alias = quantum_extensions_client.portalias_get(
+                port_alias = neutron_extensions_client.portalias_get(
                     self.request, cleaned_data['source_port_alias'])
                 cleaned_data['source_protocol'] = port_alias['protocol']
                 cleaned_data['source_public_port'] = port_alias['port']
@@ -96,7 +96,7 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
                         [msg])
                     del cleaned_data["destination_public_port"]
             else:
-                port_alias = quantum_extensions_client.portalias_get(
+                port_alias = neutron_extensions_client.portalias_get(
                     self.request, cleaned_data['destination_port_alias'])
                 cleaned_data['destination_protocol'] = port_alias['protocol']
                 cleaned_data['destination_public_port'] = port_alias['port']
@@ -123,7 +123,7 @@ class CreateFirewallRuleForm(BaseFirewallRuleForm):
                               redirect=redirect)
 
     def _create_firewall_rule(self, request, data):
-        return quantum_extensions_client.filterrule_create(request, data)
+        return neutron_extensions_client.filterrule_create(request, data)
 
 
 class EditFirewallRuleForm(BaseFirewallRuleForm):
@@ -164,4 +164,4 @@ class EditFirewallRuleForm(BaseFirewallRuleForm):
                               redirect=redirect)
 
     def _update_firewall_rule(self, request, data):
-        return quantum_extensions_client.filterrule_update(request, data)
+        return neutron_extensions_client.filterrule_update(request, data)

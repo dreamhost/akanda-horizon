@@ -21,7 +21,7 @@ from mock import patch, DEFAULT
 from openstack_dashboard.test import helpers
 
 from akanda.horizon.alias.tables import NetworkAliasTable
-from akanda.horizon.api.quantum_extensions_client import Network
+from akanda.horizon.api.neutron_extensions_client import Network
 from akanda.horizon.tests.base import table
 
 

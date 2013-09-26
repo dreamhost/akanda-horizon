@@ -20,13 +20,13 @@ class TestNetworkAliasView(helpers.TestCase):
             'akanda.horizon.alias.forms.networks.get_address_groups',
             lambda x: [(1, 'group')])
         self.get_address_groups.start()
-        self.quantum_extensions_client = patch(
-            'akanda.horizon.alias.forms.networks.quantum_extensions_client')
-        self.quantum_extensions_client.start()
+        self.neutron_extensions_client = patch(
+            'akanda.horizon.alias.forms.networks.neutron_extensions_client')
+        self.neutron_extensions_client.start()
 
     def tearDown(self):
         self.get_address_groups.stop()
-        self.quantum_extensions_client.stop()
+        self.neutron_extensions_client.stop()
 
     def test_create_network_alias(self):
         url = reverse('horizon:project:networking:alias:networks:create')
@@ -55,7 +55,7 @@ class TestNetworkAliasView(helpers.TestCase):
         self.assertIn(msg % self.form_data['name'], messages)
         self.assertMessageCount(success=1)
 
-    @patch('alias.views.networks.quantum_extensions_client.networkalias_get')
+    @patch('alias.views.networks.neutron_extensions_client.networkalias_get')
     def test_update_network_alias(self, get_obj):
         url = reverse(
             'horizon:project:networking:alias:networks:edit', args=['1'])
@@ -66,7 +66,7 @@ class TestNetworkAliasView(helpers.TestCase):
         self.assertItemsEqual(
             response.context['network_alias'], network_ref)
 
-    @patch('alias.views.networks.quantum_extensions_client.networkalias_get')
+    @patch('alias.views.networks.neutron_extensions_client.networkalias_get')
     def test_update_network_alias_assert_template(self, get_obj):
         url = reverse(
             'horizon:project:networking:alias:networks:edit', args=['1'])

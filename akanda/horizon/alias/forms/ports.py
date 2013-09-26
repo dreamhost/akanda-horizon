@@ -6,7 +6,7 @@ from horizon import messages
 from horizon import exceptions
 
 from akanda.horizon import common
-from akanda.horizon.api import quantum_extensions_client
+from akanda.horizon.api import neutron_extensions_client
 from akanda.horizon.tabs import alias_tab_redirect
 
 
@@ -40,7 +40,7 @@ class CreatePortAliasForm(BasePortAliasForm):
                               redirect=redirect)
 
     def _create_port_alias(self, request, data):
-        return quantum_extensions_client.portalias_create(request, data)
+        return neutron_extensions_client.portalias_create(request, data)
 
 
 class EditPortAliasForm(BasePortAliasForm):
@@ -61,4 +61,4 @@ class EditPortAliasForm(BasePortAliasForm):
                               redirect=redirect)
 
     def _update_port_alias(self, request, data):
-        return quantum_extensions_client.portalias_update(request, data)
+        return neutron_extensions_client.portalias_update(request, data)

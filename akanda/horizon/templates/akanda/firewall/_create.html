@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block form_id %}create_firewall_rule_form{% endblock %}
-{% block form_action %}{% url horizon:project:networking:firewall:create %}{% endblock %}
+{% block form_action %}{% url 'horizon:project:networking:firewall:create' %}{% endblock %}
 
 {% block modal-header %}{% trans "Create a Rule" %}{% endblock %}
 {% block modal_id %}create_firewall_rule_modal{% endblock %}
@@ -15,4 +15,3 @@
   <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create Rule" %}" />
   <a href="" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
-

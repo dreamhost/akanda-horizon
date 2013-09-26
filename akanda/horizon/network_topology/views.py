@@ -52,12 +52,12 @@ class JSONView(View):
                             'id': server.id} for server in servers]
         self.add_resource_url('horizon:project:instances:detail',
                               data['servers'])
-        # Get quantum data
-        quantumclient = api.quantum.quantumclient(request)
-        networks = quantumclient.list_networks()
-        subnets = quantumclient.list_subnets()
-        ports = quantumclient.list_ports()
-        routers = quantumclient.list_routers()
+        # Get neutron data
+        neutronclient = api.neutron.neutronclient(request)
+        networks = neutronclient.list_networks()
+        subnets = neutronclient.list_subnets()
+        ports = neutronclient.list_ports()
+        routers = neutronclient.list_routers()
         data['networks'] = sorted(networks.get('networks', []),
                                   key=lambda x: x.get('router:external'),
                                   reverse=True)
@@ -91,10 +91,10 @@ class JSONView(View):
         self.add_resource_url('horizon:project:routers:detail',
                               data['routers'])
 
-        # The data model in our custom quantum differ from upstream.
-        # In vanilla quantum the dictionary representing a port contains the
-        # quantum router id as value of the device_id key but our custom
-        # quantum use the akanda vm id. This difference breaks the horizon
+        # The data model in our custom neutron differ from upstream.
+        # In vanilla neutron the dictionary representing a port contains the
+        # neutron router id as value of the device_id key but our custom
+        # neutron use the akanda vm id. This difference breaks the horizon
         # network topology graph. To fix this problem we take advantage of the
         # fact that the show_router call return a dict with details about all
         # the ports the router is attached to. This allow us to reverse the
@@ -104,7 +104,7 @@ class JSONView(View):
 
         router_ports = {}
         for router in data['routers']:
-            router_details = quantumclient.show_router(router['id'])
+            router_details = neutronclient.show_router(router['id'])
             for port in router_details['router'].get('ports', []):
                 if port['device_owner'] == 'network:router_interface':
                     router_ports[port['id']] = router['id']

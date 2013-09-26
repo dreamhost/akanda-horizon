@@ -21,7 +21,7 @@ from mock import patch, DEFAULT
 from openstack_dashboard.test import helpers
 
 from akanda.horizon.alias.tables import PortAliasTable
-from akanda.horizon.api.quantum_extensions_client import Port
+from akanda.horizon.api.neutron_extensions_client import Port
 from akanda.horizon.tests.base import table
 
 PORT_TEST_DATA = (
