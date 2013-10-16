@@ -7,8 +7,10 @@ from openstack_dashboard import api
 def get_interfaces_data(self):
     try:
         router_id = self.kwargs['router_id']
-        ports = api.neutron.port_list(self.request,
-                                      router_id=router_id)
+        router = api.quantum.router_get(self.request, router_id)
+        # Note(rods): Filter off the port on the mgt network
+        ports = [api.quantum.Port(p) for p in router.ports
+                 if p['device_owner'] != 'network:router_management']
     except Exception:
         ports = []
         msg = _(
