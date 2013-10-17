@@ -9,7 +9,7 @@ def get_interfaces_data(self):
         router_id = self.kwargs['router_id']
         router = api.quantum.router_get(self.request, router_id)
         # Note(rods): Filter off the port on the mgt network
-        ports = [api.quantum.Port(p) for p in router.ports
+        ports = [api.neutron.Port(p) for p in router.ports
                  if p['device_owner'] != 'network:router_management']
     except Exception:
         ports = []
