@@ -8,7 +8,7 @@ def get_interfaces_data(self):
     try:
         router_id = self.kwargs['router_id']
         router = api.neutron.router_get(self.request, router_id)
-        # Note(rods): Filter off the port on the mgt network
+        # Filter off the port on the mgt network and router external gateway
         ports = [
             api.neutron.Port(p) for p in router.ports
             if p['device_owner'] not in (
