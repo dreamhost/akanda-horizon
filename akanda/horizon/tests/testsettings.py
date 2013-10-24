@@ -123,6 +123,7 @@ HORIZON_CONFIG = {
         "help_text": _("Password must be between 8 and 18 characters.")
     },
     'user_home': None,
+    'customization_module': 'akanda.horizon.overrides',
     'help_url': "http://docs.openstack.org",
     'exceptions': {'recoverable': RECOVERABLE,
                    'not_found': NOT_FOUND,

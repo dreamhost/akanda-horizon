@@ -1,4 +1,4 @@
-git+https://github.com/openstack/horizon.git#egg=horizon
+git+https://github.com/openstack/horizon.git@stable/havana#egg=horizon
 nose
 openstack.nose_plugin>=0.7
 coverage
