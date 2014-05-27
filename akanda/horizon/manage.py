@@ -1,6 +1,8 @@
-# Copyright 2014 DreamHost, LLC 
+#!/usr/bin/env python
+
+# Copyright 2014 DreamHost, LLC
 #
-# Author: DreamHost, LLC 
+# Author: DreamHost, LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -14,8 +16,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-
-#!/usr/bin/env python
 
 import os
 import sys
