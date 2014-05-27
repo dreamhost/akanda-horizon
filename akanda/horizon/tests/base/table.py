@@ -1,8 +1,6 @@
-# -*- encoding: utf-8 -*-
+# Copyright 2014 DreamHost, LLC
 #
-# Copyright © 2012 New Dream Network, LLC (DreamHost)
-#
-# Author: Rosario Di Somma <rosario.disomma@dreamhost.com>
+# Author: DreamHost, LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
