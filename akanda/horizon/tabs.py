@@ -46,9 +46,9 @@ class NetworkingTabs(tabs.TabGroup):
     tabs = (AliasTab,
             ConfigurationTab,
             FirewallRuleTab,
-            #NatTab,
+            # NatTab,
             PortForwardingTab,
-            #VPNTab,
+            # VPNTab,
             )
 
 
